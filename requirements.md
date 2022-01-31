@@ -51,22 +51,36 @@ What will your MVP functionality be?
 - Basic educational content implementation
 
 ## Stretch
+
 What stretch goals are you going to aim for?
 
-- Ability to unlock more gameplay features via milestones/achievements 
+- Ability to unlock more gameplay features via milestones/achievements
 - More types of crops
 - More robust educational implementation e.g. quiz game with in-game currency reward, animated pop-up with funfact
 - Intercropping (having more crop variety boosts global crop growth)
+
 ## Functional Requirements
+
 List the functionality of your product. This will consist of tasks such as the following:
 
-An admin can create and delete user accounts
-A user can update their profile information
-A user can search all of the products in the inventory
-Data Flow
-Describe the flow of data in your application. Write out what happens from the time the user begins using the app to the time the user is done with the app. Think about the “Happy Path” of the application. Describe through visuals and text what requests are made, and what data is processed, in addition to any other details about how the user moves through the site.
+- A user can tend to their farm
 
-Non-Functional Requirements (301 & 401 only)
+- A user can view their statistics
+
+- A user can find varied seeds in the shop with new varieties appearing daily
+
+- A user can learn facts about planting & gardening
+
+## Data Flow
+
+- Page loads
+- Crop grid layout is instantiated
+- Access local storage to read array of previous plot grid save file & player inventory
+- Loop through array to populate grid with plants
+- Loop through inventory to populate player's inventory with item 'buttons'
+- Each time user modifies state of farm, write gameState to local storage
+
+<!-- Non-Functional Requirements (301 & 401 only)
 Non-functional requirements are requirements that are not directly related to the functionality of the application but still important to the app.
 
 Examples include:
@@ -79,4 +93,4 @@ Pick 2 non-functional requirements and describe their functionality in your appl
 
 If you are stuck on what non-functional requirements are, do a quick online search and do some research. Write a minimum of 3-5 sentences to describe how the non-functional requirements fits into your app.
 
-You MUST describe what the non-functional requirement is and how it will be implemented. Simply saying “Our project will be testable for testibility” is NOT acceptable. Tell us how, why, and what.
+You MUST describe what the non-functional requirement is and how it will be implemented. Simply saying “Our project will be testable for testibility” is NOT acceptable. Tell us how, why, and what. -->
