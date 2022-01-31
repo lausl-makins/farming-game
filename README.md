@@ -4,7 +4,15 @@ An Educational Farming Game with a 2D grid farm plot that keeps track of your in
 
 ## Created by:
 
-- [Jeffrey Jenkins](https://github.com/orgs/lausl-makins/people/jeffreyjtech)
-- [Liesl White](https://github.com/orgs/lausl-makins/people/LieslW)
-- [Lauren Murphy](https://github.com/orgs/lausl-makins/people/L-nobilis)
-- [Michael Maker](https://github.com/orgs/lausl-makins/people/guerillaxgardener)
+- [Jeffrey Jenkins](https://github.com/jeffreyjtech)
+- [Liesl White](https://github.com/LieslW)
+- [Lauren Murphy](https://github.com/L-nobilis)
+- [Michael Maker](https://github.com/guerillaxgardener)
+
+## Wireframe
+
+![Wireframe](assets/Farm-Game-Wireframe.png "Wireframe Diagram")
+
+## Domain Model
+
+![Domain Model](assets/Domain-Project-Prep-4.png "Domain Model Diagram")
