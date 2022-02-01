@@ -126,3 +126,13 @@ h2 {
   grid-column-start: 2;
   grid-column-end: 4;
 }
+
+#pieChart{
+  height: 100px;
+  width: 100px;
+}
+
+.chartHolder{
+  height: 500px;
+  width: 500px;
+}
