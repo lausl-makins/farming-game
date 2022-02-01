@@ -20,3 +20,6 @@ An Educational Farming Game with a 2D grid farm plot that keeps track of your in
 ## Resources Used 
 [Stack Overflow](https://stackoverflow.com/questions/28939690/aligning-header-in-css-with-logo-image)
 CSS header and image alignment About Us page
+
+[Google Fonts](https://fonts.google.com/specimen/Open+Sans?category=Serif,Sans+Serif#standard-styles)
+CSS Font 

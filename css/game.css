@@ -1,7 +1,9 @@
 .plot-div {
-  width: 100%;
-  height: 100%;
-  background-color: rgb(104, 79, 51);
+  width: 192px;
+  height: 192px;
+  /* background-color: rgb(104, 79, 51); */
+  background-image: url("/img/dirt.png");
+  background-size: cover;
 }
 
 #plotGrid {
@@ -10,15 +12,39 @@
   gap: 10px;
   height: 1000px;
   width: 1000px;
-  margin: 0px auto;
 }
 
 #gameArea{
   display: grid;
   grid-template-columns: 1fr 5fr;
   border: 1px solid black;
+  width: max-content;
+  margin: 0px auto;
 }
 
 #inventoryGrid{
   border: 1px solid red;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+  justify-items: center;
+}
+
+.plot-div img{
+  width: 192px;
+  height: 192px;
+  display: block;
+}
+
+#moneyDisplay {
+  border: magenta thick solid;
+  width: max-content;
+  margin: 0px auto;
+  height: 30px;
+}
+
+.inventorySlot {
+  width: 150px;
+  height: 150px;
+  background-color: sandybrown;
 }

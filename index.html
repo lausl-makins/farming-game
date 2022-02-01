@@ -7,16 +7,38 @@
   </head>
   <body>
     <header>
-
+      <div class="header">
+        <img id="logo" src="img/carrot_fullgrown.png" alt="Logo for farming game">
+        <div>
+          <h1 id="title">DIRT/FARM/GAME</h1>
+        </div>
+      </div>
     </header>
-    <main id="gameArea">
+  
+    <nav>
+  
+      <ul>
+        <li class="navLinks"><a href="index.html">Home</a></li>
+        <li class="navLinks"><a href="stats.html">Farm Stats</a></li>
+        <li class="navLinks"><a href="aboutus.html">About Us</a></li>
+      </ul>
+  
+    </nav>
+    <div id="gameArea">
       <aside id="inventoryGrid">
+        <div id="moneyDisplay">
+          0 nuggets
+        </div>
+        <div class='inventorySlot'></div>
+        <div class='inventorySlot'></div>
+        <div class='inventorySlot'></div>
+        <div class='inventorySlot'></div>
 
       </aside>
       <div id="plotGrid">
 
       </div>
-    </main>
+    </div>
     <script src="js/app.js"></script>
   </body>
 </html>
