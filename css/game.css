@@ -1,0 +1,24 @@
+.plot-div {
+  width: 100%;
+  height: 100%;
+  background-color: rgb(104, 79, 51);
+}
+
+#plotGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+  gap: 10px;
+  height: 1000px;
+  width: 1000px;
+  margin: 0px auto;
+}
+
+#gameArea{
+  display: grid;
+  grid-template-columns: 1fr 5fr;
+  border: 1px solid black;
+}
+
+#inventoryGrid{
+  border: 1px solid red;
+}
