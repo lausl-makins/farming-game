@@ -8,6 +8,7 @@ const plotQty = 25; // index 0-24
 let gameArea = document.getElementById('gameArea');
 let plotGrid = document.getElementById('plotGrid');
 let inventoryGrid = document.getElementById('inventoryGrid');
+let moneyDisplay = document.getElementById('moneyDisplay');
 
 //Will not be saved, created at initialization:
 let cropTypes = []; //List of all possible crop types implemented
@@ -80,7 +81,11 @@ function UserStats(playerMoney = 0){
   this.cropsGrown;
   this.nuggetsLearned;
   this.playerMoney = playerMoney;
-
+}
+function userMoney(number){
+  user.playerMoney += number;
+  user.totalMoneyGained += number;
+  moneyDisplay.innerText = user.playerMoney +' nuggets';
 }
 
 
@@ -105,16 +110,17 @@ function handleClick(event){
     console.log('theres a thing here');
     plotGridState[plotIndex].killPlant();
     plotGridState[plotIndex] = undefined;
-    user.playerMoney += 150;
-  }else{
-    if (!Number.isNaN(plotIndex)){
-      sowSeedAtLocation(plotIndex,'potato');
-    }
+    // Adding money to user's current and lifetime dollarinos/nuggets/lauren-potatoes
+    userMoney(150);
+  } else if (!Number.isNaN(plotIndex)){ // If the clicked plot is not inhabited by a LivePlant, aka plotIndex is NaN, then we'll sow a seed in it.
+    console.log('we sowed a seed');
+    sowSeedAtLocation(plotIndex,'potato');
   }
+
 
   console.log(plotIndex);
   console.log(user.playerMoney);
-  // If the clicked plot is not inhabited by a LivePlant, aka plotIndex is NaN, then we'll sow a seed in it.
+
 }
 
 // have big event listener where we expect user to interact
