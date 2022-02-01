@@ -8,13 +8,8 @@ body {
 /* ***************header********* */
 
 .header {
-  /* border: black 3px solid; */
   text-align: center;
   font-size: 100px;
-  /* margin-left: 50px;
-  margin-right: 50px;
-  margin-top: 30px;
-  margin-bottom: 30px; */
   background-color: #3e8ca1;
   color: antiquewhite;
 
@@ -37,20 +32,20 @@ main p{
   margin-top: 0.5%;
   text-align: left;
   float: left;
-
+  background-color: bisque;
+  border-radius: 20px;
 }
 
 #title {
   text-align: left;
   /* margin-left: 50px; */
   padding-left: 200px;
+  margin-top: 1%;
+  padding-top: 1%;
   font-size: 100px;
   font-family: 'Kalam', cursive;
   
 }
-
-
-
 /* ***********END header*********** */
 
 
@@ -66,7 +61,6 @@ ul {
   margin: 0;
   padding: 0;
   list-style: none;
- 
 }
 
 nav ul li {
@@ -117,12 +111,10 @@ h2 {
   padding: 5%;
   color: #154115;
   font-family: 'Supermercado One', cursive;
-  /* font-family: 'Kalam', cursive; */
 
 }
 
 .profileBox{
-  /* background-color: #88607f; */
   border: 1px solid white;
   margin-bottom: 5%;
   display: grid;
@@ -131,7 +123,6 @@ h2 {
 }
 
 .creatorInfo{
-  /* border: 1px solid black; */
   grid-column-start: 2;
   grid-column-end: 4;
 }
