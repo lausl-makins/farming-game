@@ -38,17 +38,18 @@ function renderChart() {
   const myChart = new Chart(ctx, chartObj);
 }
 
+let tableElem;
+
 renderChart();
 renderStatsTable();
 
 
-let tableElem;
 function renderStatsTable() {
   statsTableHolder.removeChild(statsTableHolder.childNodes[0]); //removes existing table so we dont draw duplicates
   // Create table:
-  if (!tableElem){
-    tableElem = document.createElement('table');
-  }
+  // if (tableElem){
+  tableElem = document.createElement('table');
+  // }
   statsTableHolder.appendChild(tableElem);
   
   addRowToTable('Times clicked', 450);
@@ -62,9 +63,10 @@ function addRowToTable(title, number) {
   let newCell = document.createElement('td');
   let newCell2 = document.createElement('td');
   newCell.textContent = title;
-  newCell.textContent = number;
+  newCell2.textContent = number;
   newRow.appendChild(newCell);
   newRow.appendChild(newCell2);
+  tableElem.appendChild(newRow);
 }
 
 // function addHeadersToTable(table) {
