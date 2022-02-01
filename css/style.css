@@ -127,12 +127,55 @@ h2 {
   grid-column-end: 4;
 }
 
-#pieChart{
-  height: 100px;
-  width: 100px;
+.chartHolder{
+  height: 400px;
+  width: 400px;
+  border: 2px bisque solid;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 10px;
+  padding: 1%;
 }
 
-.chartHolder{
-  height: 500px;
-  width: 500px;
+#statsGridContainer {
+  background-color: #B9C6AA;
+  width: 80%;
+  margin-top: 25px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 10%;
+  padding: 5%;
+  color: #154115;
+  font-family: 'Supermercado One', cursive;
+  display: grid; 
+  grid-template-columns: 1fr 1fr; 
+  grid-template-rows: 1fr; 
+  gap: 2%; 
+  grid-template-areas: 
+    ". ."
+    ". ."
+    ". ."; 
+}
+
+#statsTable {
+  width: auto;
+  height: auto;
+  font-size: 20px;
+
+}
+
+#statsTable tr {
+  background-color: white;
+}
+
+#statsTable tr:nth-child(odd) {
+  background-color: #88607f;
+}
+
+#statsTable td {
+  padding: 20px;
+  border: 1px solid black;
+  border-collapse: collapse;
 }
