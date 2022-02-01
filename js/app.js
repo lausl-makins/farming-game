@@ -1,7 +1,6 @@
 'use strict';
 
 
-
 // This is how many plot objects will be instantiated to populate the plotGrid
 const plotQty = 25;
 
@@ -29,7 +28,7 @@ function initPlotGrid() {
   }
 }
 
-// Constructor for 
+// Constructor for crops
 function Crop(yieldQty, sellValue, growthTime, sprites, slug) {
   this.yieldQty = yieldQty,
   this.sellValue = sellValue;
@@ -39,6 +38,7 @@ function Crop(yieldQty, sellValue, growthTime, sprites, slug) {
   cropTypes.push(this);
 }
 
+//Plant entity
 function LivePlant(cropSlug, age = 0, needsWater = false, location) {
   this.cropSlug = cropSlug,
   this.age = age,
