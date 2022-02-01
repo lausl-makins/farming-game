@@ -45,8 +45,8 @@ main p{
   /* margin-left: 50px; */
   padding-left: 200px;
   font-size: 100px;
+  font-family: 'Kalam', cursive;
   
- 
 }
 
 
@@ -86,6 +86,12 @@ nav ul li a {
 
 /* END NAV */
 
+h2 {
+  font-size: 30px;
+  font-family: 'Kalam', cursive;
+  color: #88607f;
+}
+
 
 .creatorPhotos {
   width: 150px;
@@ -101,6 +107,10 @@ nav ul li a {
   margin-top: 25px;
   margin-left: auto;
   margin-right: auto;
+  margin-bottom: 10%;
+  padding: 5%;
+  /* font-family: 'Kalam', cursive; */
 
 }
-/*  */
+
+
