@@ -42,14 +42,20 @@ function Crop(yieldQty, sellValue, growthTime, sprites, slug) {
 }
 
 //Plant entity
-function LivePlant(cropSlug, age = 0, needsWater = false, location) {
+function LivePlant(cropSlug, age = 0, needsWater = false, locationElem) {
   this.cropSlug = cropSlug,
   this.age = age,
   this.needsWater = needsWater;
-  this.location = location; //the index number of the plot space
+  this.locationElem = locationElem; //the index number of the plot space
 }
 
-
+// LivePlant method to render the plant
+LivePlant.prototype.renderPlant = function(){
+  let cropElement = document.createElement('img');
+  cropElement.src = 'img/carrot_fullgrown.png';//`${cropSlug}_${age}.jpg` -> carrot_fullgrown.jpg
+  cropElement.setAttribute('id',`${this.locationElem.id}-carrot`);
+  this.locationElem.appendChild(cropElement);
+};
 
 
 //Items appear in the inventory.  For now only Seeds are items
@@ -84,22 +90,30 @@ function pushLocalStorage(){
 // *********************** EVENT HANDLER ********************************
 
 function handleClick(event){
-  console.log(event.target.id);
+  console.log(event.target);
   let plotIndex = Number.parseInt(event.target.id);
+  // If the clicked plot is inhabited by a LivePlant, we'll execute this block
+  if(plotGridState[plotIndex]){
+    console.log('theres a thing here');
+    event.target.src = '';
+    plotGridState[plotIndex] = null;
+  }
   console.log(plotIndex);
-  sowSeedAtLocation(plotIndex,'potato');
+  // If the clicked plot is not inhabited by a LivePlant, aka plotIndex is NaN, then we'll sow a seed in it.
+  if (!Number.isNaN(plotIndex)){
+    sowSeedAtLocation(plotIndex,'potato');
+  }
 }
 // have big event listener where we expect user to interact
 
+// Event Handler Helper functions, which will inherit and use the originating event object
+
 //Function called when player sows seeds
 function sowSeedAtLocation(location, seedType){
-  plotGridState[location] = new LivePlant(seedType, 0, false, location);
-  let cropElement = document.createElement('img');
-  cropElement.src = 'assets/lauren.jpg';
-  event.target.appendChild(cropElement);
+  plotGridState[location] = new LivePlant(seedType, 0, false, event.target);
+  plotGridState[location].renderPlant();
   //save the plotgridstate
 }
-
 
 
 // function saveGame{
