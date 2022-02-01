@@ -15,7 +15,6 @@ let allItems = []; //List of all possible items the player could have in their i
 
 //Will be saved/loaded:
 let playerInventory = []; //list of slugs
-let playerMoney = 0;
 let plotGridState = []; //list of LivePlant objects and empty spaces
 //add plant to specific index spot when planting
 //remove from index space when harvesting
@@ -55,7 +54,14 @@ LivePlant.prototype.renderPlant = function(){
   cropElement.src = 'img/carrot_fullgrown.png';//`${cropSlug}_${age}.jpg` -> carrot_fullgrown.jpg
   cropElement.setAttribute('id',`${this.locationElem.id}-carrot`);
   this.locationElem.appendChild(cropElement);
+  this.cropElem = cropElement;
 };
+
+//*************     commit plant crime     *****************//
+LivePlant.prototype.killPlant = function(){
+  this.locationElem.removeChild(this.cropElem);
+};
+
 
 
 //Items appear in the inventory.  For now only Seeds are items
@@ -66,13 +72,15 @@ function Item(slug, title, sprite) {
   allItems.push(this);
 }
 
-//Tracks longterm user stats, used on the stats page and saved to localStorage
-function UserStats(){
+//Tracks longterm user stats & money, used on the stats page and saved to localStorage
+function UserStats(playerMoney = 0){
   this.totalPlayTime;
   this.totalMoneyGained; //money may be nuggets
   this.cropsHarvested; //tracks harvest and sell
   this.cropsGrown;
   this.nuggetsLearned;
+  this.playerMoney = playerMoney;
+
 }
 
 
@@ -95,15 +103,20 @@ function handleClick(event){
   // If the clicked plot is inhabited by a LivePlant, we'll execute this block
   if(plotGridState[plotIndex]){
     console.log('theres a thing here');
-    event.target.src = '';
-    plotGridState[plotIndex] = null;
+    plotGridState[plotIndex].killPlant();
+    plotGridState[plotIndex] = undefined;
+    user.playerMoney += 150;
+  }else{
+    if (!Number.isNaN(plotIndex)){
+      sowSeedAtLocation(plotIndex,'potato');
+    }
   }
+
   console.log(plotIndex);
+  console.log(user.playerMoney);
   // If the clicked plot is not inhabited by a LivePlant, aka plotIndex is NaN, then we'll sow a seed in it.
-  if (!Number.isNaN(plotIndex)){
-    sowSeedAtLocation(plotIndex,'potato');
-  }
 }
+
 // have big event listener where we expect user to interact
 
 // Event Handler Helper functions, which will inherit and use the originating event object
