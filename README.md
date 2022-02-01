@@ -16,3 +16,7 @@ An Educational Farming Game with a 2D grid farm plot that keeps track of your in
 ## Domain Model
 
 ![Domain Model](assets/Domain-Project-Prep-4.png "Domain Model Diagram")
+
+## Resources Used 
+[Stack Overflow](https://stackoverflow.com/questions/28939690/aligning-header-in-css-with-logo-image)
+CSS header and image alignment About Us page
