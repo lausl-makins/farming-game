@@ -75,13 +75,14 @@ nav ul li {
   font-size: 24px;
   text-decoration: none; 
   background-color: #B9c6aa;
-  color: #779482;
+  color: #ffffff;
   padding: 5px;
 }
 
 nav ul li a {
   text-decoration: none;
   color: #779482;
+  font-family: 'Supermercado One', cursive;
 }
 
 /* END NAV */
@@ -90,6 +91,8 @@ h2 {
   font-size: 30px;
   font-family: 'Kalam', cursive;
   color: #88607f;
+  text-align: left;
+  padding: 10px;
 }
 
 
@@ -99,6 +102,9 @@ h2 {
   margin-left: 2%;
   margin-bottom: 5px;
   border: rgb(255, 255, 255) 3px solid;
+  grid-column-start: 1;
+  grid-column-end: 1;
+  object-fit: cover;
 }
 
 #ourAboutUsInfo{
@@ -109,8 +115,23 @@ h2 {
   margin-right: auto;
   margin-bottom: 10%;
   padding: 5%;
+  color: #154115;
+  font-family: 'Supermercado One', cursive;
   /* font-family: 'Kalam', cursive; */
 
 }
 
+.profileBox{
+  /* background-color: #88607f; */
+  border: 1px solid white;
+  margin-bottom: 5%;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 1fr;
+}
 
+.creatorInfo{
+  /* border: 1px solid black; */
+  grid-column-start: 2;
+  grid-column-end: 4;
+}
