@@ -98,7 +98,7 @@ LivePlant.prototype.killPlant = function(){
   this.locationElem.removeChild(this.cropElem);
 };
 
-// TODO: method to check growth stage and render new sprite if needed JEFFREY
+// This method checks growth stage and calls the renderPlant method with the growth stage as the argument
 LivePlant.prototype.evalGrowth = function(){
   let livePlantSlug = this.cropSlug;
   let referenceCrop = cropTypes.find(element => element.slug === livePlantSlug);
@@ -172,7 +172,9 @@ function sowSeedAtLocation(location, seedType){
 window.setInterval(globalTick, 1000);
 
 function globalTick(){
-  // TODO: loop through plotGridState array to call evalGrowth() method JEFFREY
+  // This is the event function to handle plant growth.
+  // Per the event handler above, it fires every second.
+  // It loops through the plotGridState array to call evalGrowth() method on any LivePlants
   for (let i in plotGridState){
     if(plotGridState[i] && plotGridState[i].fullyGrown !== true){
       plotGridState[i].age++;
