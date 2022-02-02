@@ -193,16 +193,20 @@ function Crop(yieldQty, sellValue, growthTime, sprites, slug) {
 function LivePlant(cropSlug, age = 0, needsWater = false, locationElem) {
   this.cropSlug = cropSlug,
   this.age = age,
+  this.fullyGrown = false;
   this.needsWater = needsWater;
   this.locationElem = locationElem; //the DOM element of the plot space
   this.cropElem; //the DOM element of the crop image
 }
 
 // LivePlant method to render the plant
-LivePlant.prototype.renderPlant = function () {
+LivePlant.prototype.renderPlant = function(ageStage = 'growth1'){
   let cropElement = document.createElement('img');
-  cropElement.src = 'img/carrot_fullgrown.png';//`${cropSlug}_${age}.jpg` -> carrot_fullgrown.jpg
-  cropElement.setAttribute('id', `${this.locationElem.id}-${this.slug}`);
+  cropElement.src = `../img/${this.cropSlug}_${ageStage}.png`;
+  cropElement.setAttribute('id',`${this.locationElem.id}-${this.cropSlug}`);
+  if(this.cropElem){
+    this.locationElem.removeChild(this.cropElem);
+  }
   this.locationElem.appendChild(cropElement);
   this.cropElem = cropElement;
 };
@@ -212,8 +216,25 @@ LivePlant.prototype.killPlant = function () {
   this.locationElem.removeChild(this.cropElem);
 };
 
-// TODO: method to check growth stage and render new sprite if needed JEFFREY
-// USE THIS NAME PLS evalGrowth()
+// This method checks growth stage and calls the renderPlant method with the growth stage as the argument
+LivePlant.prototype.evalGrowth = function(){
+  let livePlantSlug = this.cropSlug;
+  let referenceCrop = cropTypes.find(element => element.slug === livePlantSlug);
+  let stage = 'growth1';
+  if (this.age >= referenceCrop.growthTime){
+    this.fullyGrown = true;
+    if(referenceCrop.slug === 'carrot'){
+      stage = 'fullgrown';
+    } else{
+      stage = 'produce';
+    }
+  } else if (this.age >= (2/3)*referenceCrop.growthTime){
+    stage = 'growth3';
+  } else if (this.age >= (1/3)*referenceCrop.growthTime){
+    stage = 'growth2';
+  }
+  this.renderPlant(stage);
+};
 
 //Items appear in the inventory.  For now only Seeds are items
 function Item(slug, title, sprite) {
@@ -292,9 +313,17 @@ function sowSeedAtLocation(location, seedType) {
 
 window.setInterval(globalTick, 1000);
 
-function globalTick() {
-  console.log('tick');
-  // TODO: loop through plotGridState array to call evalGrowth() method JEFFREY
+
+function globalTick(){
+  // This is the event function to handle plant growth.
+  // Per the event handler above, it fires every second.
+  // It loops through the plotGridState array to call evalGrowth() method on any LivePlants
+  for (let i in plotGridState){
+    if(plotGridState[i] && plotGridState[i].fullyGrown !== true){
+      plotGridState[i].age++;
+      plotGridState[i].evalGrowth();
+    }
+  }
 }
 
 // *********************** FUNCTION CALLS/ OBJECT INSTANTIATION ********************************
