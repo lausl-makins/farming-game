@@ -10,6 +10,9 @@ let plotGrid = document.getElementById('plotGrid');
 let inventoryGrid = document.getElementById('inventoryGrid');
 let moneyDisplay = document.getElementById('moneyDisplay');
 
+
+// GLOBAL VARIABLES
+
 //Will not be saved, created at initialization:
 let cropTypes = []; //List of all possible crop types implemented
 let allItems = []; //List of all possible items the player could have in their inventory
@@ -20,6 +23,9 @@ let plotGridState = []; //list of LivePlant objects and empty spaces
 //add plant to specific index spot when planting
 //remove from index space when harvesting
 
+// TODO: variable to track which seed is selected for planting LAUREN
+
+// FUNCTIONS
 
 function initPlotGrid() {
   // initial render of blank plots, aka populate DOM with plot elements and create an array of plot elements
@@ -31,6 +37,30 @@ function initPlotGrid() {
   }
 }
 
+function userMoney(number){
+  user.playerMoney += number;
+  user.totalMoneyGained += number;
+  moneyDisplay.innerText = user.playerMoney +' nuggets';
+}
+
+
+//This function puts all of our save state and user data into local storage.
+function pushLocalStorage(){
+  let stringifiedUserData = JSON.stringify(user);
+  localStorage.setItem('user',stringifiedUserData);
+  // TODO: Stringify and save inventory and plotGridState LIESL
+}
+
+
+//TODO: function to replace cursor icon with the seed icon when a seed is selected from store/inventory LAUREN
+
+//TODO: function clear cursor graphic and reset to default LAUREN
+
+//TODO: function to retrieve localStorage data, returns the objects in a 3 element array [plotGridState, userData, inventory]  LIESL
+
+//TODO: reconstructor function, loops through retrieved localStorage object(s) and re-instatiates them MICHAEL
+
+// CONSTRUCTORS AND METHODS
 // Constructor for crops
 function Crop(yieldQty, sellValue, growthTime, sprites, slug) {
   this.yieldQty = yieldQty,
@@ -46,7 +76,8 @@ function LivePlant(cropSlug, age = 0, needsWater = false, locationElem) {
   this.cropSlug = cropSlug,
   this.age = age,
   this.needsWater = needsWater;
-  this.locationElem = locationElem; //the index number of the plot space
+  this.locationElem = locationElem; //the DOM element of the plot space
+  this.cropElem; //the DOM element of the crop image
 }
 
 // LivePlant method to render the plant
@@ -63,7 +94,8 @@ LivePlant.prototype.killPlant = function(){
   this.locationElem.removeChild(this.cropElem);
 };
 
-
+// TODO: method to check growth stage and render new sprite if needed JEFFREY
+// USE THIS NAME PLS evalGrowth()
 
 //Items appear in the inventory.  For now only Seeds are items
 function Item(slug, title, sprite) {
@@ -82,22 +114,7 @@ function UserStats(playerMoney = 0){
   this.nuggetsLearned;
   this.playerMoney = playerMoney;
 }
-function userMoney(number){
-  user.playerMoney += number;
-  user.totalMoneyGained += number;
-  moneyDisplay.innerText = user.playerMoney +' nuggets';
-}
 
-
-let user = new UserStats;
-
-//This function puts all of our save state and user data into local storage.
-function pushLocalStorage(){
-  let stringifiedUserData = JSON.stringify(user);
-  localStorage.setItem('user',stringifiedUserData);
-  //will be adding a save state later
-  //save state is gamer term for all thats happened in gamer world that you've saved
-}
 
 
 // *********************** EVENT HANDLER ********************************
@@ -116,11 +133,8 @@ function handleClick(event){
     console.log('we sowed a seed');
     sowSeedAtLocation(plotIndex,'potato');
   }
-
-
   console.log(plotIndex);
   console.log(user.playerMoney);
-
 }
 
 // have big event listener where we expect user to interact
@@ -134,17 +148,28 @@ function sowSeedAtLocation(location, seedType){
   //save the plotgridstate
 }
 
+window.setInterval(globalTick, 1000);
 
-// function saveGame{
+function globalTick(){
+  console.log('tick');
+  // TODO: loop through plotGridState array to call evalGrowth() method JEFFREY
+}
 
-// }
+// *********************** FUNCTION CALLS/ OBJECT INSTANTIATION ********************************
 
+// TODO call localStorage retrieval function LIESL
+
+// TODO call object reconstructor function MICHAEL
+
+let user = new UserStats;
+
+// TODO instatiate new Crops: potato, carrot, tomato MICHAEL
 let corn = new Crop(3, 200, 30, [], 'corn');
 
+// TODO insatiate new seed Items: potato, carrot, tomato MICHAEL
 let cornSeeds = new Item('cornseeds','Corn Seeds', 'cornseeds');
 
 initPlotGrid();
 
 //event listener
 gameArea.addEventListener('click', handleClick);
-
