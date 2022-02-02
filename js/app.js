@@ -24,7 +24,7 @@ let plotGridState = []; //list of LivePlant objects and empty spaces
 //remove from index space when harvesting
 
 // DONE: variable to track which seed is selected for planting LAUREN
-let currentItemSelected = 'potato_seed'; //Tracks the slug of which seed or other item the user has clicked on, therefore readying it for planting. Used by SowSeedAtLocation()
+let currentItemSelected; //Tracks the slug of which seed or other item the user has clicked on, therefore readying it for planting. Used by SowSeedAtLocation()
 
 // FUNCTIONS
 
@@ -38,7 +38,7 @@ function initPlotGrid() {
   }
 }
 
-function userMoney(number) {
+function givePlayerMoney(number) {
   user.playerMoney += number;
   user.totalMoneyGained += number;
   moneyDisplay.innerText = user.playerMoney + ' nuggets';
@@ -76,7 +76,7 @@ function changeCursor(newCursorFilename) {
 function drawInventory(inventory) {
   //inventoryGrid is our dom object
 
-  playerInventory = ['carrot_seeds', 'carrot_seeds', 'tomato_seeds', 'tomato_seeds'];
+  playerInventory = ['carrot', 'carrot', 'tomato', 'tomato'];
 
   //clear out all inventoryslots from inventorygrid
   for (let i = 0; i < inventoryGrid.children.length; i++) {
@@ -93,6 +93,7 @@ function drawInventory(inventory) {
     let newItemIcon = document.createElement('img'); //Make an image to display the item
     newItemIcon.src = 'img/seeds_tomato.png'; //Set the icon's source; TODO:  Template literal to dynamically set icon
     newItemIcon.className = 'itemIcon';
+    newItemIcon.id = playerInventory[i];
 
     newSlot.appendChild(newItemIcon);
 
@@ -124,11 +125,6 @@ function changeSelectedItem(itemSlug) {
 
 //TODO: function to retrieve localStorage data, returns the objects in a 3 element array [plotGridState, userData, inventory]  LIESL
 
-
-let stringifiedInventory = localStorage.getItem('playerInventory');
-
-let stringifiedGrid = localStorage.getItem('plotGridState');
-
 function retrievedUserData() {
   // //test code start
   // let testData = localStorage.getItem('test');
@@ -141,43 +137,42 @@ function retrievedUserData() {
   let stringifiedGrid = localStorage.getItem('plotGridState');
   console.log('this is my plot grid data',stringifiedGrid);
 
-  //TODO render data on page 
-  
-} 
+  //TODO render data on page
+
+}
 
 
 
-//TODO: reconstructor function, loops through retrieved localStorage object(s) and re-instatiates them MICHAEL
-
-console.log(parsedObjects) //not sure what the variable name is above 
-
+//TODO: reconstructor function, loops through retrieved localStorage object(s) and re-instantiates them MICHAEL
+/* The function retrievedUserData() is not complete
 function resonstructObjFromLocal(){
   //do I have objects in storage
   for (let i = 0; i < parsedObjects.length; i++){
     let myParsedGridState = new LivePlant(
-    LivePlant[i].cropSlug,
-    LivePlant[i].age,
-    LivePlant[i].needsWater,
-    LivePlant[i].locationElem,
-    LivePlant[i].cropElem);
+      LivePlant[i].cropSlug,
+      LivePlant[i].age,
+      LivePlant[i].needsWater,
+      LivePlant[i].locationElem,
+      LivePlant[i].cropElem);
 
     let myParsedUserData = new UserStats(
-    UserStats[i].totalPlayTime,
-    UserStats[i].totalMoneyGained,
-    UserStats[i].cropsHarvested,
-    UserStats[i].cropsGrown,
-    UserStats[i].nuggetsLearned,
-    UserStats[i].playerMoney);
+      UserStats[i].totalPlayTime,
+      UserStats[i].totalMoneyGained,
+      UserStats[i].cropsHarvested,
+      UserStats[i].cropsGrown,
+      UserStats[i].nuggetsLearned,
+      UserStats[i].playerMoney);
 
     let myParsedInventory = new Item(
-    Item[i].slug, 
-    Item[i].title, 
-    Item[i].sprite);
+      Item[i].slug,
+      Item[i].title,
+      Item[i].sprite);
 
     allItems.push(myParsedInventory);
   }
+}*/
 
- 
+
 // CONSTRUCTORS AND METHODS
 // Constructor for crops
 function Crop(yieldQty, sellValue, growthTime, sprites, slug) {
@@ -254,8 +249,6 @@ function UserStats(playerMoney = 0) {
   this.playerMoney = playerMoney;
 }
 
-
-
 // *********************** EVENT HANDLER ********************************
 
 function handleClick(event) {
@@ -272,7 +265,7 @@ function handleClick(event) {
       plotGridState[plotIndex].killPlant();
       plotGridState[plotIndex] = undefined;
       // Adding money to user's money
-      userMoney(150);
+      givePlayerMoney(150);
     }
     else if (!Number.isNaN(plotIndex)) { // If the clicked plot is not inhabited by a LivePlant, aka plotIndex is NaN, then we'll sow a seed in it.
       console.log('Clicked empty plot');
@@ -285,13 +278,9 @@ function handleClick(event) {
     console.log(user.playerMoney);
   }
 
-  pushLocalStorage(); //saving user data 
-}
-
-  //If we clicked on an item icon:
   else if (event.target.className === 'itemIcon') {
     console.log('Clicked on inventory item');
-    changeSelectedItem('seeds_tomato'); //TODO:  make this dynamic
+    changeSelectedItem(event.target.id); //TODO:  make this dynamic
   }
 
   //If we didn't click on the above, let's deselect our current item.
@@ -299,7 +288,10 @@ function handleClick(event) {
     console.log('Clicked somewhere not meaningful');
     changeSelectedItem(null);
   }
+  pushLocalStorage(); //saving user data
+  //If we clicked on an item icon:
 }
+
 
 // Event Handler Helper functions, which will inherit and use the originating event object
 
@@ -338,7 +330,7 @@ let parsedInt = JSON.parse(stringifiedUser);
 // TODO call object reconstructor function MICHAEL
 
 // TODO call object reconstructor function to reconstruct items after pulling from local storage
-resonstructObjFromLocal();
+// resonstructObjFromLocal();
 
 
 
@@ -349,15 +341,13 @@ let potato = new Crop(1, 40, 30, [], 'potato');
 let carrot = new Crop(1, 15, 15, [], 'carrot');
 let corn   = new Crop(3, 20, 45, [], 'corn');
 let tomato = new Crop(20, 5, 60, [], 'tomato');
-let laurenPotato = new Crop(100, 1000, 1, [], 'laurenPotato');
 
 
 // Feeding new seed Items: potato, carrot, tomato, corn to Item constructor function: Item(slug, title, sprite)
-let potatoSeeds = new Item('potatoseeds','Potato Seeds', 'potatoseeds');
-let carrotSeeds = new Item('carrotseeds','Carrot Seeds', 'carrotseeds');
-let cornSeeds = new Item('cornseeds','Corn Seeds', 'cornseeds');
-let tomatoSeeds = new Item('tomatoseeds','Tomato Seeds', 'tomatoseeds');
-let laurenPotatoSeed = new Item('lpotatoseeds', 'L-Potato Seeds', 'laurenpotatoseeds')
+let potatoSeeds = new Item('potato','Potato Seeds', 'potatoseeds');
+let carrotSeeds = new Item('carrot','Carrot Seeds', 'carrotseeds');
+let cornSeeds = new Item('corn','Corn Seeds', 'cornseeds');
+let tomatoSeeds = new Item('tomato','Tomato Seeds', 'tomatoseeds');
 
 
 /// *********************** Functions called upon pageload *********************** 
