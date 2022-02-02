@@ -152,7 +152,7 @@ function handleClick(event){
     userMoney(150);
   } else if (!Number.isNaN(plotIndex)){ // If the clicked plot is not inhabited by a LivePlant, aka plotIndex is NaN, then we'll sow a seed in it.
     console.log('we sowed a seed');
-    sowSeedAtLocation(plotIndex,'potato');
+    sowSeedAtLocation(plotIndex,'corn');
   }
   console.log(plotIndex);
   console.log(user.playerMoney);
@@ -174,7 +174,7 @@ window.setInterval(globalTick, 1000);
 function globalTick(){
   // TODO: loop through plotGridState array to call evalGrowth() method JEFFREY
   for (let i in plotGridState){
-    if(plotGridState[i].fullyGrown !== true){
+    if(plotGridState[i] && plotGridState[i].fullyGrown !== true){
       plotGridState[i].age++;
       plotGridState[i].evalGrowth();
     }
