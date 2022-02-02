@@ -50,8 +50,11 @@ function pushLocalStorage() {
   let stringifiedUserData = JSON.stringify(user);
   localStorage.setItem('user', stringifiedUserData);
   // TODO: Stringify and save inventory and plotGridState LIESL
+  let stringifiedInventory = JSON.stringify(playerInventory);
+  localStorage.setItem('playerInventory',stringifiedInventory);
+  let stringifiedGrid = JSON.stringify(plotGridState); 
+  localStorage.setItem('plotGridState',stringifiedGrid);
 }
-
 
 //--> DONE: function to replace cursor icon with the seed icon when a seed is selected from store/inventory LAUREN
 //--> DONE: function clear cursor graphic and reset to default LAUREN
@@ -118,7 +121,31 @@ function changeSelectedItem(itemSlug) {
 // }
 
 
+
 //TODO: function to retrieve localStorage data, returns the objects in a 3 element array [plotGridState, userData, inventory]  LIESL
+
+
+let stringifiedInventory = localStorage.getItem('playerInventory');
+
+let stringifiedGrid = localStorage.getItem('plotGridState');
+
+function retrievedUserData() {
+  // //test code start
+  // let testData = localStorage.getItem('test');
+  // console.log('test data', testData);
+  // //test code end
+  let stringifiedUserData = localStorage.getItem('user');
+  console.log('this is my user data',stringifiedUserData);
+  let stringifiedInventory = localStorage.getItem('plyaerInventory');
+  console.log('this is my inventory data',stringifiedInventory);
+  let stringifiedGrid = localStorage.getItem('plotGridState');
+  console.log('this is my plot grid data',stringifiedGrid);
+
+  //TODO render data on page 
+  
+} 
+
+
 
 //TODO: reconstructor function, loops through retrieved localStorage object(s) and re-instatiates them MICHAEL
 
@@ -208,6 +235,9 @@ function handleClick(event) {
     console.log(user.playerMoney);
   }
 
+  pushLocalStorage(); //saving user data 
+}
+
   //If we clicked on an item icon:
   else if (event.target.className === 'itemIcon') {
     console.log('Clicked on inventory item');
@@ -241,6 +271,10 @@ function globalTick() {
 // *********************** FUNCTION CALLS/ OBJECT INSTANTIATION ********************************
 
 // TODO call localStorage retrieval function LIESL
+
+let stringifiedUser = localStorage.getItem('user');
+
+let parsedInt = JSON.parse(stringifiedUser);
 
 // TODO call object reconstructor function MICHAEL
 
