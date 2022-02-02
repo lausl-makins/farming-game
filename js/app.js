@@ -18,12 +18,13 @@ let cropTypes = []; //List of all possible crop types implemented
 let allItems = []; //List of all possible items the player could have in their inventory
 
 //Will be saved/loaded:
-let playerInventory = []; //list of slugs
+let playerInventory = ['carrot_seeds', 'carrot_seeds', 'tomato_seeds']; //list of slugs
 let plotGridState = []; //list of LivePlant objects and empty spaces
 //add plant to specific index spot when planting
 //remove from index space when harvesting
 
-// TODO: variable to track which seed is selected for planting LAUREN
+// DONE: variable to track which seed is selected for planting LAUREN
+let currentItemSelected = 'potato_seed'; //Tracks the slug of which seed or other item the user has clicked on, therefore readying it for planting. Used by SowSeedAtLocation()
 
 // FUNCTIONS
 
@@ -37,26 +38,114 @@ function initPlotGrid() {
   }
 }
 
-function userMoney(number){
+function userMoney(number) {
   user.playerMoney += number;
   user.totalMoneyGained += number;
-  moneyDisplay.innerText = user.playerMoney +' nuggets';
+  moneyDisplay.innerText = user.playerMoney + ' nuggets';
 }
 
 
 //This function puts all of our save state and user data into local storage.
-function pushLocalStorage(){
+function pushLocalStorage() {
   let stringifiedUserData = JSON.stringify(user);
-  localStorage.setItem('user',stringifiedUserData);
+  localStorage.setItem('user', stringifiedUserData);
   // TODO: Stringify and save inventory and plotGridState LIESL
+  let stringifiedInventory = JSON.stringify(playerInventory);
+  localStorage.setItem('playerInventory',stringifiedInventory);
+  let stringifiedGrid = JSON.stringify(plotGridState); 
+  localStorage.setItem('plotGridState',stringifiedGrid);
+}
+
+//--> DONE: function to replace cursor icon with the seed icon when a seed is selected from store/inventory LAUREN
+//--> DONE: function clear cursor graphic and reset to default LAUREN
+
+function changeCursor(newCursorFilename) {
+  //newCursor should be either the name of the item that the cursor changes to or it should be null, which makes the cursor the default one again. 
+  let cursorElement = document.getElementsByTagName('body')[0];
+  if (newCursorFilename !== null) {
+    cursorElement.style.cursor = `url('/img/${newCursorFilename}.png'), auto`;
+  }
+  else {
+    cursorElement.style.cursor = 'pointer';
+  }
 }
 
 
-//TODO: function to replace cursor icon with the seed icon when a seed is selected from store/inventory LAUREN
+// **************************************************************  I N V E N T O R Y     F U N C T I O N S **************************************************************
+//displays/refreshes the player's inventory as buttons
+function drawInventory(inventory) {
+  //inventoryGrid is our dom object
 
-//TODO: function clear cursor graphic and reset to default LAUREN
+  playerInventory = ['carrot_seeds', 'carrot_seeds', 'tomato_seeds', 'tomato_seeds'];
+
+  //clear out all inventoryslots from inventorygrid
+  for (let i = 0; i < inventoryGrid.children.length; i++) {
+    inventoryGrid.removeChild(inventoryGrid.lastChild);
+  }
+
+  //draws new inventory slots for each item in our inv
+  for (let i = 0; i < playerInventory.length; i++) {
+    // console.log(`Found item in player inventory: ${playerInventory[i]}`);
+
+    let newSlot = document.createElement('div'); //Make a new slot for the item
+    newSlot.className = 'inventorySlot';
+
+    let newItemIcon = document.createElement('img'); //Make an image to display the item
+    newItemIcon.src = 'img/seeds_tomato.png'; //Set the icon's source; TODO:  Template literal to dynamically set icon
+    newItemIcon.className = 'itemIcon';
+
+    newSlot.appendChild(newItemIcon);
+
+    inventoryGrid.appendChild(newSlot);
+  }
+  //inventoryslots get onclicks for ChangeSelectedItem(); or whatever
+
+}
+
+// function addItemToInventory(itemSlug) {
+
+// }
+
+// function removeItemFromInventory(itemSlug) {
+
+// }
+
+function changeSelectedItem(itemSlug) {
+  currentItemSelected = itemSlug;
+  changeCursor(itemSlug);
+
+}
+
+// function tryUseSelectedItem() {
+
+// }
+
+
 
 //TODO: function to retrieve localStorage data, returns the objects in a 3 element array [plotGridState, userData, inventory]  LIESL
+
+
+let stringifiedInventory = localStorage.getItem('playerInventory');
+
+let stringifiedGrid = localStorage.getItem('plotGridState');
+
+function retrievedUserData() {
+  // //test code start
+  // let testData = localStorage.getItem('test');
+  // console.log('test data', testData);
+  // //test code end
+  let stringifiedUserData = localStorage.getItem('user');
+  console.log('this is my user data',stringifiedUserData);
+  let stringifiedInventory = localStorage.getItem('plyaerInventory');
+  console.log('this is my inventory data',stringifiedInventory);
+  let stringifiedGrid = localStorage.getItem('plotGridState');
+  console.log('this is my plot grid data',stringifiedGrid);
+
+  //TODO render data on page 
+  
+} 
+
+
 
 //TODO: reconstructor function, loops through retrieved localStorage object(s) and re-instatiates them MICHAEL
 
@@ -110,16 +199,16 @@ function LivePlant(cropSlug, age = 0, needsWater = false, locationElem) {
 }
 
 // LivePlant method to render the plant
-LivePlant.prototype.renderPlant = function(){
+LivePlant.prototype.renderPlant = function () {
   let cropElement = document.createElement('img');
   cropElement.src = 'img/carrot_fullgrown.png';//`${cropSlug}_${age}.jpg` -> carrot_fullgrown.jpg
-  cropElement.setAttribute('id',`${this.locationElem.id}-carrot`);
+  cropElement.setAttribute('id', `${this.locationElem.id}-${this.slug}`);
   this.locationElem.appendChild(cropElement);
   this.cropElem = cropElement;
 };
 
 //*************     commit plant crime     *****************//
-LivePlant.prototype.killPlant = function(){
+LivePlant.prototype.killPlant = function () {
   this.locationElem.removeChild(this.cropElem);
 };
 
@@ -135,7 +224,7 @@ function Item(slug, title, sprite) {
 }
 
 //Tracks longterm user stats & money, used on the stats page and saved to localStorage
-function UserStats(playerMoney = 0){
+function UserStats(playerMoney = 0) {
   this.totalPlayTime;
   this.totalMoneyGained; //money may be nuggets
   this.cropsHarvested; //tracks harvest and sell
@@ -148,38 +237,62 @@ function UserStats(playerMoney = 0){
 
 // *********************** EVENT HANDLER ********************************
 
-function handleClick(event){
+function handleClick(event) {
   console.log(event.target);
-  let plotIndex = Number.parseInt(event.target.id);
-  // If the clicked plot is inhabited by a LivePlant, we'll execute this block
-  if(plotGridState[plotIndex]){
-    console.log('theres a thing here');
-    plotGridState[plotIndex].killPlant();
-    plotGridState[plotIndex] = undefined;
-    // Adding money to user's current and lifetime dollarinos/nuggets/lauren-potatoes
-    userMoney(150);
-  } else if (!Number.isNaN(plotIndex)){ // If the clicked plot is not inhabited by a LivePlant, aka plotIndex is NaN, then we'll sow a seed in it.
-    console.log('we sowed a seed');
-    sowSeedAtLocation(plotIndex,'potato');
+
+  //If we clicked on a plot:
+  if (event.target.className.includes('plot') || event.target.id.includes('plot')) {
+    console.log('clicked on plot');
+    let plotIndex = Number.parseInt(event.target.id);
+
+    // If the clicked plot is inhabited by a LivePlant, we'll kill/harvest the plant and get our money from it
+    if (plotGridState[plotIndex] !== undefined) {
+      console.log(plotGridState);
+      plotGridState[plotIndex].killPlant();
+      plotGridState[plotIndex] = undefined;
+      // Adding money to user's money
+      userMoney(150);
+    }
+    else if (!Number.isNaN(plotIndex)) { // If the clicked plot is not inhabited by a LivePlant, aka plotIndex is NaN, then we'll sow a seed in it.
+      console.log('Clicked empty plot');
+      if (currentItemSelected !== null) {
+        sowSeedAtLocation(plotIndex, currentItemSelected);
+      }
+    }
+
+    console.log(plotIndex);
+    console.log(user.playerMoney);
   }
-  console.log(plotIndex);
-  console.log(user.playerMoney);
+
+  pushLocalStorage(); //saving user data 
 }
 
-// have big event listener where we expect user to interact
+  //If we clicked on an item icon:
+  else if (event.target.className === 'itemIcon') {
+    console.log('Clicked on inventory item');
+    changeSelectedItem('seeds_tomato'); //TODO:  make this dynamic
+  }
+
+  //If we didn't click on the above, let's deselect our current item.
+  else {
+    console.log('Clicked somewhere not meaningful');
+    changeSelectedItem(null);
+  }
+}
 
 // Event Handler Helper functions, which will inherit and use the originating event object
 
 //Function called when player sows seeds
-function sowSeedAtLocation(location, seedType){
+function sowSeedAtLocation(location, seedType) {
   plotGridState[location] = new LivePlant(seedType, 0, false, event.target);
   plotGridState[location].renderPlant();
-  //save the plotgridstate
+  changeSelectedItem(null);
+  //save the plotgridstate  
 }
 
 window.setInterval(globalTick, 1000);
 
-function globalTick(){
+function globalTick() {
   console.log('tick');
   // TODO: loop through plotGridState array to call evalGrowth() method JEFFREY
 }
@@ -189,8 +302,15 @@ function globalTick(){
 // TODO call localStorage retrieval function LIESL
 
 
+let stringifiedUser = localStorage.getItem('user');
+
+let parsedInt = JSON.parse(stringifiedUser);
+
+// TODO call object reconstructor function MICHAEL
+
 // TODO call object reconstructor function to reconstruct items after pulling from local storage
 resonstructObjFromLocal();
+
 
 
 let user = new UserStats;
@@ -210,7 +330,10 @@ let cornSeeds = new Item('cornseeds','Corn Seeds', 'cornseeds');
 let tomatoSeeds = new Item('tomatoseeds','Tomato Seeds', 'tomatoseeds');
 let laurenPotatoSeed = new Item('lpotatoseeds', 'L-Potato Seeds', 'laurenpotatoseeds')
 
-initPlotGrid();
 
-//event listener
+/// *********************** Functions called upon pageload *********************** 
+initPlotGrid();
+drawInventory(playerInventory);
+
+// *********************** event listeners *********************** 
 gameArea.addEventListener('click', handleClick);
