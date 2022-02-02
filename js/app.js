@@ -60,6 +60,35 @@ function pushLocalStorage(){
 
 //TODO: reconstructor function, loops through retrieved localStorage object(s) and re-instatiates them MICHAEL
 
+console.log(parsedObjects) //not sure what the variable name is above 
+
+function resonstructObjFromLocal(){
+  //do I have objects in storage
+  for (let i = 0; i < parsedObjects.length; i++){
+    let myParsedGridState = new LivePlant(
+    LivePlant[i].cropSlug,
+    LivePlant[i].age,
+    LivePlant[i].needsWater,
+    LivePlant[i].locationElem,
+    LivePlant[i].cropElem);
+
+    let myParsedUserData = new UserStats(
+    UserStats[i].totalPlayTime,
+    UserStats[i].totalMoneyGained,
+    UserStats[i].cropsHarvested,
+    UserStats[i].cropsGrown,
+    UserStats[i].nuggetsLearned,
+    UserStats[i].playerMoney);
+
+    let myParsedInventory = new Item(
+    Item[i].slug, 
+    Item[i].title, 
+    Item[i].sprite);
+
+    allItems.push(myParsedInventory);
+  }
+
+ 
 // CONSTRUCTORS AND METHODS
 // Constructor for crops
 function Crop(yieldQty, sellValue, growthTime, sprites, slug) {
@@ -159,15 +188,27 @@ function globalTick(){
 
 // TODO call localStorage retrieval function LIESL
 
-// TODO call object reconstructor function MICHAEL
+
+// TODO call object reconstructor function to reconstruct items after pulling from local storage
+resonstructObjFromLocal();
+
 
 let user = new UserStats;
+//  sprite arrays not necessary
+//Feeding our Crop constructor new crops: function Crop(yieldQty, sellValue, growthTime, sprites, slug)
+let potato = new Crop(1, 40, 30, [], 'potato');
+let carrot = new Crop(1, 15, 15, [], 'carrot');
+let corn   = new Crop(3, 20, 45, [], 'corn');
+let tomato = new Crop(20, 5, 60, [], 'tomato');
+let laurenPotato = new Crop(100, 1000, 1, [], 'laurenPotato');
 
-// TODO instatiate new Crops: potato, carrot, tomato MICHAEL
-let corn = new Crop(3, 200, 30, [], 'corn');
 
-// TODO insatiate new seed Items: potato, carrot, tomato MICHAEL
+// Feeding new seed Items: potato, carrot, tomato, corn to Item constructor function: Item(slug, title, sprite)
+let potatoSeeds = new Item('potatoseeds','Potato Seeds', 'potatoseeds');
+let carrotSeeds = new Item('carrotseeds','Carrot Seeds', 'carrotseeds');
 let cornSeeds = new Item('cornseeds','Corn Seeds', 'cornseeds');
+let tomatoSeeds = new Item('tomatoseeds','Tomato Seeds', 'tomatoseeds');
+let laurenPotatoSeed = new Item('lpotatoseeds', 'L-Potato Seeds', 'laurenpotatoseeds')
 
 initPlotGrid();
 
