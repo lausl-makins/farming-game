@@ -138,7 +138,7 @@ function retrievedUserData() {
   console.log('this is my plot grid data', stringifiedGrid);
   let parsedGrid = JSON.parse(stringifiedGrid);
 
-  return [parsedUserData, parsedInventory, parsedGrid]
+  return [parsedUserData, parsedInventory, parsedGrid];
 }
 
 //TODO: reconstructor function, loops through retrieved localStorage object(s) and re-instantiates them MICHAEL
@@ -146,17 +146,22 @@ function retrievedUserData() {
 
 function reconstructObjFromLocal() {
   let parsedObjects = retrievedUserData();
-  let parsedGrid = parsedObjects[0];
+  let parsedGrid = parsedObjects[2];
   // for (let i = 0; i < parsedObjects.length; i++){
+  console.log(parsedGrid);
   for (let j = 0; j < parsedGrid.length; j++) {
-    let parsedGrid = new LivePlant(
+    if(parsedGrid[j] !== null){
+    let newPlant = new LivePlant(
       parsedGrid[j].cropSlug,
-      parsedGrid[j].age,
-      parsedGrid[j].needsWater,
-      parsedGrid[j].locationElem);
+      // parsedGrid[j].locationElem,
+      // parsedGrid[j].needsWater,
+      parsedGrid[j].age);
+      plotGridState[j] = newPlant;
+    }
   }
 
-  let parsedUser = parsedObjects[1];
+  let parsedUser = parsedObjects[0];
+  console.log(parsedObjects[0]);
   user = new UserStats(
     parsedUser.totalPlayTime,
     parsedUser.totalMoneyGained,
@@ -164,9 +169,9 @@ function reconstructObjFromLocal() {
     parsedUser.cropsGrown,
     parsedUser.nuggetsLearned,
     parsedUser.playerMoney);
-    console.log(parsedObjects[1]);
-  let parsedInventory = parsedObjects[2];
-  playerInventory = parsedInventory
+  let parsedInventory = parsedObjects[1];
+
+  playerInventory = parsedInventory;
   //   let parsedInventory = new Item(
   //   Item[i].slug,
   //   Item[i].title,
@@ -181,7 +186,7 @@ function reconstructObjFromLocal() {
 // Constructor for crops
 function Crop(yieldQty, sellValue, growthTime, sprites, slug) {
   this.yieldQty = yieldQty,
-    this.sellValue = sellValue;
+  this.sellValue = sellValue;
   this.growthTime = growthTime;
   this.sprites = sprites;
   this.slug = slug;
@@ -189,10 +194,10 @@ function Crop(yieldQty, sellValue, growthTime, sprites, slug) {
 }
 
 //Plant entity
-function LivePlant(cropSlug, age = 0, needsWater = false, locationElem) {
+function LivePlant(cropSlug, locationElem, age = 0, needsWater = false) {
   this.cropSlug = cropSlug,
-    this.age = age,
-    this.fullyGrown = false;
+  this.age = age,
+  this.fullyGrown = false;
   this.needsWater = needsWater;
   this.locationElem = locationElem; //the DOM element of the plot space
   this.cropElem; //the DOM element of the crop image
@@ -298,10 +303,10 @@ function handleClick(event) {
 
 //Function called when player sows seeds
 function sowSeedAtLocation(location, seedType) {
-  plotGridState[location] = new LivePlant(seedType, 0, false, event.target);
+  plotGridState[location] = new LivePlant(seedType, event.target, 0, false);
   plotGridState[location].renderPlant();
   changeSelectedItem(null);
-  //save the plotgridstate  
+  //save the plotgridstate
 }
 
 window.setInterval(globalTick, 1000);
@@ -348,7 +353,7 @@ let stringifiedUser = localStorage.getItem('user');
 
 // let parsedInt = JSON.parse(stringifiedUser);
 
-if (localStorage.getItem(user)){
+if (localStorage.getItem('user')){
   reconstructObjFromLocal();
 }
 
