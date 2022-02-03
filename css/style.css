@@ -179,3 +179,25 @@ h2 {
   border: 1px solid black;
   border-collapse: collapse;
 }
+
+.citations {
+  font-family: "Arial";
+  font-size: 12px;
+}
+
+/* p .factlist {
+  /* list-style-type: circle;
+  */
+  /* border: 1px solid black;
+} */ */
+
+.producePhotos {
+  width: 225px;
+  height: 225px;
+  margin-left: 2%;
+  margin-bottom: 5px;
+  border: rgb(255, 255, 255) 3px solid;
+  grid-column-start: 1;
+  grid-column-end: 1;
+  object-fit: cover;
+}
