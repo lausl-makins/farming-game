@@ -50,7 +50,6 @@ loadUser();
 renderChart();
 renderStatsTable();
 
-
 function renderStatsTable() {
   statsTableHolder.removeChild(statsTableHolder.childNodes[0]); //removes existing table so we dont draw duplicates
   // Create table:
@@ -87,13 +86,17 @@ function computeTimeString() {
   let hours = 0;
   let minutes = 0;
   if (remainingSeconds >= 3600){
+    // Divides the remaining seconds by 3600 and rounds down to get hours
     hours = Math.floor(remainingSeconds/3600);
+    // "Removes" the x hours worth of seconds from remaining seconds
     remainingSeconds -= hours*3600;
   }
   if (user.totalPlayTime >= 60){
+    // Same process except we're dividing and multiplying by 60
     minutes = Math.floor(remainingSeconds/60);
     remainingSeconds -= minutes*60;
   }
+  // Returns the time string in a template literal
   return `${hours}:${minutes}:${remainingSeconds}`;
 }
 
