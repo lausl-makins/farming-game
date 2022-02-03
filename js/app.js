@@ -16,6 +16,7 @@ let user;
 
 //Will not be saved, created at initialization:
 let cropTypes = []; //List of all possible crop types implemented
+let allCropSlugs = [];
 let allItems = []; //List of all possible items the player could have in their inventory
 
 //Will be saved/loaded:
@@ -182,6 +183,7 @@ function Crop(yieldQty, sellValue, growthTime, sprites, slug) {
   this.sprites = sprites;
   this.slug = slug;
   cropTypes.push(this);
+  allCropSlugs.push(slug);
 }
 
 //Plant entity
@@ -254,9 +256,8 @@ function Item(slug, title, sprite) {
 function UserStats() {
   this.totalPlayTime = 0;
   this.totalMoneyGained = 150; //money may be nuggets
-  this.cropTypesForChart = allCropSlugs;
-  this.cropsHarvested = []; // Harvested crops are automatically sold, so we're only tracking this one object
-  // This array has two parallel sub arrays. Sub-array 1 is the crop slugs, sub-array 2 is the qty for each crop slug.
+  this.cropTypesForChart = allCropSlugs; // This array has all the crop type slugs, which is dynamically generated
+  this.cropsHarvested = []; // Harvested crops are automatically sold, so we're only tracking this one array.
   this.nuggetsLearned = 0;
   this.playerMoney = 150;
 }
@@ -345,7 +346,6 @@ let carrotSeeds = new Item('carrot', 'Carrot Seeds', 'carrotseeds');
 let cornSeeds = new Item('corn', 'Corn Seeds', 'cornseeds');
 let tomatoSeeds = new Item('tomato', 'Tomato Seeds', 'tomatoseeds');
 
-let allCropSlugs = cropTypes.map(element => element.slug);
 /// *********************** Functions called upon pageload ***********************
 
 initPlotGrid();
