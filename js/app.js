@@ -13,6 +13,8 @@ let moneyDisplay = document.getElementById('moneyDisplay');
 
 // GLOBAL VARIABLES
 
+let user;
+
 //Will not be saved, created at initialization:
 let cropTypes = []; //List of all possible crop types implemented
 let allItems = []; //List of all possible items the player could have in their inventory
@@ -126,51 +128,53 @@ function changeSelectedItem(itemSlug) {
 //TODO: function to retrieve localStorage data, returns the objects in a 3 element array [plotGridState, userData, inventory]  LIESL
 
 function retrievedUserData() {
-  // //test code start
-  // let testData = localStorage.getItem('test');
-  // console.log('test data', testData);
-  // //test code end
   let stringifiedUserData = localStorage.getItem('user');
   console.log('this is my user data',stringifiedUserData);
-  let stringifiedInventory = localStorage.getItem('plyaerInventory');
+  let parsedUserData = JSON.parse(stringifiedUserData);
+  let stringifiedInventory = localStorage.getItem('playerInventory');
   console.log('this is my inventory data',stringifiedInventory);
+  let parsedInventory = JSON.parse(stringifiedInventory);
   let stringifiedGrid = localStorage.getItem('plotGridState');
   console.log('this is my plot grid data',stringifiedGrid);
+  let parsedGrid = JSON.parse(stringifiedGrid);
 
-  //TODO render data on page
-
+  return [parsedUserData, parsedInventory, parsedGrid]
 }
 
-
-
 //TODO: reconstructor function, loops through retrieved localStorage object(s) and re-instantiates them MICHAEL
-/* The function retrievedUserData() is not complete
+// The function retrievedUserData() is not complete
+
 function resonstructObjFromLocal(){
-  //do I have objects in storage
-  for (let i = 0; i < parsedObjects.length; i++){
-    let myParsedGridState = new LivePlant(
-      LivePlant[i].cropSlug,
-      LivePlant[i].age,
-      LivePlant[i].needsWater,
-      LivePlant[i].locationElem,
-      LivePlant[i].cropElem);
+  let parsedObjects = retrievedUserData();
+  let parsedGrid = parsedObjects[0];
+  // for (let i = 0; i < parsedObjects.length; i++){
+    for (let j = 0; j < parsedGrid.length; j++) {
+      let parsedGrid = new LivePlant(
+        parsedGrid[j].cropSlug,
+        parsedGrid[j].age,
+        parsedGrid[j].needsWater,
+        parsedGrid[j].locationElem);
+    }
 
-    let myParsedUserData = new UserStats(
-      UserStats[i].totalPlayTime,
-      UserStats[i].totalMoneyGained,
-      UserStats[i].cropsHarvested,
-      UserStats[i].cropsGrown,
-      UserStats[i].nuggetsLearned,
-      UserStats[i].playerMoney);
+    let parsedUser = parsedObjects[1];
+     user = new UserStats(
+      parsedUser.totalPlayTime,
+      parsedUser.totalMoneyGained,
+      parsedUser.cropsHarvested,
+      parsedUser.cropsGrown,
+      parsedUser.nuggetsLearned,
+      parsedUser.playerMoney);
 
-    let myParsedInventory = new Item(
-      Item[i].slug,
-      Item[i].title,
-      Item[i].sprite);
+    let parsedInventory = parsedObjects[2];
+    playerInventory = parsedInventory
+    //   let parsedInventory = new Item(
+    //   Item[i].slug,
+    //   Item[i].title,
+    //   Item[i].sprite);
 
-    allItems.push(myParsedInventory);
+    // allItems.push(myParsedInventory);
   }
-}*/
+// }
 
 
 // CONSTRUCTORS AND METHODS
@@ -330,11 +334,14 @@ let parsedInt = JSON.parse(stringifiedUser);
 // TODO call object reconstructor function MICHAEL
 
 // TODO call object reconstructor function to reconstruct items after pulling from local storage
-// resonstructObjFromLocal();
+resonstructObjFromLocal();
 
 
+if (user){
+  user = new UserStats;
+}
 
-let user = new UserStats;
+
 //  sprite arrays not necessary
 //Feeding our Crop constructor new crops: function Crop(yieldQty, sellValue, growthTime, sprites, slug)
 let potato = new Crop(1, 40, 30, [], 'potato');
