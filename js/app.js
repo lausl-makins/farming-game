@@ -43,6 +43,11 @@ function initPlotGrid() {
 function givePlayerMoney(number) {
   user.playerMoney += number;
   user.totalMoneyGained += number;
+  renderPlayerMoney();
+}
+
+// Show player money\
+function renderPlayerMoney(){
   moneyDisplay.innerText = user.playerMoney + ' nuggets';
 }
 
@@ -51,7 +56,6 @@ function givePlayerMoney(number) {
 function pushLocalStorage() {
   let stringifiedUserData = JSON.stringify(user);
   localStorage.setItem('user', stringifiedUserData);
-  // TODO: Stringify and save inventory and plotGridState LIESL
   let stringifiedInventory = JSON.stringify(playerInventory);
   localStorage.setItem('playerInventory', stringifiedInventory);
   let stringifiedGrid = JSON.stringify(plotGridState);
@@ -125,7 +129,7 @@ function changeSelectedItem(itemSlug) {
 
 
 
-//TODO: function to retrieve localStorage data, returns the objects in a 3 element array [plotGridState, userData, inventory]  LIESL
+// This function retrieves localStorage data, returns the objects in a 3 element array [plotGridState, userData, inventory]  LIESL
 
 function retrievedUserData() {
   let stringifiedUserData = localStorage.getItem('user');
@@ -146,19 +150,6 @@ function retrievedUserData() {
 
 function reconstructObjFromLocal() {
   let parsedObjects = retrievedUserData();
-  let parsedGrid = parsedObjects[2];
-  // for (let i = 0; i < parsedObjects.length; i++){
-  console.log(parsedGrid);
-  for (let j = 0; j < parsedGrid.length; j++) {
-    if(parsedGrid[j] !== null){
-    let newPlant = new LivePlant(
-      parsedGrid[j].cropSlug,
-      // parsedGrid[j].locationElem,
-      // parsedGrid[j].needsWater,
-      parsedGrid[j].age);
-      plotGridState[j] = newPlant;
-    }
-  }
 
   let parsedUser = parsedObjects[0];
   console.log(parsedObjects[0]);
@@ -169,9 +160,24 @@ function reconstructObjFromLocal() {
     parsedUser.cropsGrown,
     parsedUser.nuggetsLearned,
     parsedUser.playerMoney);
-  let parsedInventory = parsedObjects[1];
 
+  let parsedInventory = parsedObjects[1];
   playerInventory = parsedInventory;
+
+  let parsedGrid = parsedObjects[2];
+  // for (let i = 0; i < parsedObjects.length; i++){
+  // console.log(parsedGrid);
+  for (let j = 0; j < parsedGrid.length; j++) {
+    let retrievedCrop = parsedGrid[j];
+    if(retrievedCrop !== null){
+      let restoredPlant = new LivePlant(
+        retrievedCrop.cropSlug,
+        retrievedCrop.locationIndex,
+        retrievedCrop.age);
+      plotGridState[j] = restoredPlant;
+      console.log(`Added retrievedCrop ${retrievedCrop.cropSlug} to index ${j} in plotGridState`);
+    }
+  }
   //   let parsedInventory = new Item(
   //   Item[i].slug,
   //   Item[i].title,
@@ -194,30 +200,39 @@ function Crop(yieldQty, sellValue, growthTime, sprites, slug) {
 }
 
 //Plant entity
-function LivePlant(cropSlug, locationElem, age = 0, needsWater = false) {
+function LivePlant(cropSlug, locationIndex, age = 0, needsWater = false) {
   this.cropSlug = cropSlug,
   this.age = age,
   this.fullyGrown = false;
   this.needsWater = needsWater;
-  this.locationElem = locationElem; //the DOM element of the plot space
-  this.cropElem; //the DOM element of the crop image
+  this.locationIndex = locationIndex; //the index which represents it's location in the plot grid
+  // It's stored as a property since the LivePlant's methods need to perform DOM manipulation on itself
 }
 
 // LivePlant method to render the plant
 LivePlant.prototype.renderPlant = function (ageStage = 'growth1') {
-  let cropElement = document.createElement('img');
-  cropElement.src = `../img/${this.cropSlug}_${ageStage}.png`;
-  cropElement.setAttribute('id', `${this.locationElem.id}-${this.cropSlug}`);
-  if (this.cropElem) {
-    this.locationElem.removeChild(this.cropElem);
+  let cropElem = document.createElement('img');
+  // Get and assign the plant's parent element to a temporary variable
+  let locationElem = document.getElementById(`${this.locationIndex}-plot`);
+  cropElem.src = `../img/${this.cropSlug}_${ageStage}.png`;
+  // This ID must start with a number matching its index in the plotGridState
+  // This way our onClick event handler behaves in a predictable way even if a crop is on top of a plot
+  cropElem.id = `${this.locationIndex}-${this.cropSlug}`;
+  cropElem.setAttribute('class', 'crop');
+  if (locationElem.lastChild) {
+    // If locationElem has a child, like another plant or the previous render of this plant, remove it!
+    locationElem.removeChild(locationElem.lastChild);
   }
-  this.locationElem.appendChild(cropElement);
-  this.cropElem = cropElement;
+  // Now append the crop's element to the DOM so it can be seen and interacted with
+  locationElem.appendChild(cropElem);
 };
 
 //*************     commit plant crime     *****************//
 LivePlant.prototype.killPlant = function () {
-  this.locationElem.removeChild(this.cropElem);
+  // Get and assign the plant's parent element to a temporary variable
+  let locationElem = document.getElementById(`${this.locationIndex}-plot`);
+  // Remove it's lastChild, which should be the img element rendered by this LivePlant.
+  locationElem.removeChild(locationElem.lastChild);
 };
 
 // This method checks growth stage and calls the renderPlant method with the growth stage as the argument
@@ -264,19 +279,18 @@ function handleClick(event) {
   console.log(event.target);
 
   //If we clicked on a plot:
-  if (event.target.className.includes('plot') || event.target.id.includes('plot')) {
+  if (event.target.className.includes('plot') || event.target.className.includes('crop')) {
     console.log('clicked on plot');
     let plotIndex = Number.parseInt(event.target.id);
 
     // If the clicked plot is inhabited by a LivePlant, we'll kill/harvest the plant and get our money from it
-    if (plotGridState[plotIndex] !== undefined) {
-      console.log(plotGridState);
+    if (event.target.className === 'crop') {
       plotGridState[plotIndex].killPlant();
       plotGridState[plotIndex] = undefined;
       // Adding money to user's money
       givePlayerMoney(150);
     }
-    else if (!Number.isNaN(plotIndex)) { // If the clicked plot is not inhabited by a LivePlant, aka plotIndex is NaN, then we'll sow a seed in it.
+    else if (!Number.isNaN(plotIndex) && typeof(currentItemSelected) === 'string') { // If the clicked plot is not inhabited by a LivePlant (plotIndex is N) then we'll sow a seed in it.
       console.log('Clicked empty plot');
       if (currentItemSelected !== null) {
         sowSeedAtLocation(plotIndex, currentItemSelected);
@@ -286,7 +300,7 @@ function handleClick(event) {
 
   else if (event.target.className === 'itemIcon') {
     console.log('Clicked on inventory item');
-    changeSelectedItem(event.target.id); //TODO:  make this dynamic
+    changeSelectedItem(event.target.id);
   }
 
   //If we didn't click on the above, let's deselect our current item.
@@ -303,14 +317,11 @@ function handleClick(event) {
 
 //Function called when player sows seeds
 function sowSeedAtLocation(location, seedType) {
-  plotGridState[location] = new LivePlant(seedType, event.target, 0, false);
+  plotGridState[location] = new LivePlant(seedType, location, 0, false);
   plotGridState[location].renderPlant();
   changeSelectedItem(null);
   //save the plotgridstate
 }
-
-window.setInterval(globalTick, 1000);
-
 
 function globalTick() {
   // This is the event function to handle plant growth.
@@ -320,15 +331,12 @@ function globalTick() {
     if (plotGridState[i] && plotGridState[i].fullyGrown !== true) {
       plotGridState[i].age++;
       plotGridState[i].evalGrowth();
+      pushLocalStorage();
     }
   }
 }
 
 // *********************** FUNCTION CALLS/ OBJECT INSTANTIATION ********************************
-
-// TODO call localStorage retrieval function LIESL
-
-
 
 //  sprite arrays not necessary
 //Feeding our Crop constructor new crops: function Crop(yieldQty, sellValue, growthTime, sprites, slug)
@@ -345,11 +353,11 @@ let cornSeeds = new Item('corn', 'Corn Seeds', 'cornseeds');
 let tomatoSeeds = new Item('tomato', 'Tomato Seeds', 'tomatoseeds');
 
 
-/// *********************** Functions called upon pageload *********************** 
-initPlotGrid();
-drawInventory(playerInventory);
+/// *********************** Functions called upon pageload ***********************
 
-let stringifiedUser = localStorage.getItem('user');
+initPlotGrid();
+
+// let stringifiedUser = localStorage.getItem('user');
 
 // let parsedInt = JSON.parse(stringifiedUser);
 
@@ -362,6 +370,11 @@ if (user===undefined) {
   user = new UserStats();
 }
 
+drawInventory(playerInventory);
+renderPlayerMoney();
+globalTick();
 
-// *********************** event listeners *********************** 
+// *********************** event listeners ***********************
 gameArea.addEventListener('click', handleClick);
+
+window.setInterval(globalTick, 1000);
