@@ -65,7 +65,7 @@ function renderStatsTable() {
   }
 
   addRowToTable('Time played', timeString);
-  addRowToTable('Total money earned', user.totalMoneyGained);
+  addRowToTable('Total nuggets earned', user.totalMoneyGained);
   addRowToTable('Total crop Harvests', totalHarvests);
 }
 
