@@ -12,13 +12,13 @@ let moneyDisplay = document.getElementById('moneyDisplay');
 
 
 // GLOBAL VARIABLES
-
-let user = new UserStats();
+let user;
 
 let currentItemSelected; //Tracks the slug of which seed or other item the user has clicked on, therefore readying it for planting. Used by SowSeedAtLocation()
 
 //Will not be saved, created at initialization:
 let cropTypes = []; //List of all possible crop types implemented
+let allCropSlugs = [];
 let allItems = []; //List of all possible items the player could have in their inventory
 
 //Will be saved/loaded:
@@ -184,6 +184,7 @@ function Crop(yieldQty, sellValue, growthTime, sprites, slug) {
   this.sprites = sprites;
   this.slug = slug;
   cropTypes.push(this);
+  allCropSlugs.push(slug);
 }
 
 //Plant entity
@@ -252,13 +253,16 @@ function Item(slug, title, sprite, seedCost) {
 }
 
 //Tracks longterm user stats & money, used on the stats page and saved to localStorage
-function UserStats(totalPlayTime, totalMoneyGained, cropsHarvested, cropsGrown, nuggetsLearned, playerMoney = 200) {
-  this.totalPlayTime = totalPlayTime;
-  this.totalMoneyGained = totalMoneyGained; //money may be nuggets
-  this.cropsHarvested = cropsHarvested; //tracks harvest and sell
-  this.cropsGrown = cropsGrown;
-  this.nuggetsLearned = nuggetsLearned;
-  this.playerMoney = playerMoney;
+//The values assigned are the defaults for a new user
+//This constructor function will not be called if the user's data already exists in localStorage
+function UserStats() {
+  this.totalPlayTime = 0;
+  this.totalMoneyGained = 150; //money may be nuggets
+  this.cropTypesForChart = allCropSlugs; // This array has all the crop type slugs, which is dynamically generated
+  this.cropsHarvested = []; // Harvested crops are automatically sold, so we're only tracking this one array.
+  this.nuggetsLearned = 0;
+  this.playerMoney = 150;
+
 }
 
 // *********************** EVENT HANDLER ********************************
@@ -272,11 +276,15 @@ function handleClick(event) {
     let plotIndex = Number.parseInt(event.target.id);
 
     // If the clicked plot is inhabited by a LivePlant, we'll kill/harvest the plant and get our money from it
-    if (event.target.className === 'crop') {
+    if (event.target.className === 'crop' && plotGridState[plotIndex].fullyGrown) {
+      let clickedPlantSlug = plotGridState[plotIndex].cropSlug;
+      let slugIndex = allCropSlugs.indexOf(clickedPlantSlug);
+      let referenceCrop = cropTypes.find(element => element.slug === clickedPlantSlug);
+      user.cropsHarvested[slugIndex]++;
       plotGridState[plotIndex].killPlant();
-      plotGridState[plotIndex] = undefined;
+      plotGridState[plotIndex] = null;
       // Adding money to user's money
-      givePlayerMoney(150);
+      givePlayerMoney(referenceCrop.yieldQty * referenceCrop.sellValue);
     }
     else if (!Number.isNaN(plotIndex) && typeof (currentItemSelected) === 'string') { // If the clicked plot is not inhabited by a LivePlant (plotIndex is N) then we'll sow a seed in it.
       console.log('Clicked empty plot');
@@ -321,6 +329,7 @@ function sowSeedAtLocation(location, seedType) {
 }
 
 function globalTick() {
+  user.totalPlayTime++;
   // This is the event function to handle plant growth.
   // Per the event handler above, it fires every second.
   // It loops through the plotGridState array to call evalGrowth() method on any LivePlants
@@ -328,9 +337,9 @@ function globalTick() {
     if (plotGridState[i] && plotGridState[i].fullyGrown !== true) {
       plotGridState[i].age++;
       plotGridState[i].evalGrowth();
-      pushLocalStorage();
     }
   }
+  pushLocalStorage();
 }
 
 // *********************** Store-Related Stuff ********************************
@@ -427,7 +436,6 @@ let potatoSeeds = new Item('potato', 'Potato Seeds', 'potatoseeds', 100);
 let carrotSeeds = new Item('carrot', 'Carrot Seeds', 'carrotseeds', 40);
 let cornSeeds = new Item('corn', 'Corn Seeds', 'cornseeds', 100);
 let tomatoSeeds = new Item('tomato', 'Tomato Seeds', 'tomatoseeds', 50);
-
 
 /// *********************** Functions called upon pageload ***********************
 
