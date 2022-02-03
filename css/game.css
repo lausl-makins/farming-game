@@ -1,7 +1,6 @@
 .plot-div {
   width: 192px;
   height: 192px;
-  /* background-color: rgb(104, 79, 51); */
   background-image: url("../img/dirt.png");
   background-size: cover;
 }
@@ -17,13 +16,13 @@
 #gameArea{
   display: grid;
   grid-template-columns: 1fr 5fr;
-  border: 1px solid black;
+  border: 1px solid #779482;
   width: max-content;
   margin: 0px auto;
 }
 
 #inventoryGrid{
-  border: 1px solid red;
+  border: 1px solid #779482;
   display: grid;
   grid-template-columns: 1fr;
   gap: 10px;
@@ -37,7 +36,7 @@
 }
 
 #moneyDisplay {
-  border: magenta thick solid;
+  border: #779482 thick solid;
   width: max-content;
   margin: 0px auto;
   height: 30px;
@@ -46,5 +45,19 @@
 .inventorySlot {
   width: 150px;
   height: 150px;
-  background-color: sandybrown;
+  /* background-color: sandybrown; */
 }
+
+#moneydisplay {
+  font-family: 'Supermercado One', cursive;
+}
+
+img{
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  image-rendering: crisp-edges;
+}
+
+/* #gamearea img {
+  width: 100px;
+  height: 100px; */
