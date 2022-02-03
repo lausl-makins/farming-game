@@ -13,7 +13,7 @@ let moneyDisplay = document.getElementById('moneyDisplay');
 
 // GLOBAL VARIABLES
 
-let user;
+let user = new UserStats();
 
 //Will not be saved, created at initialization:
 let cropTypes = []; //List of all possible crop types implemented
@@ -53,9 +53,9 @@ function pushLocalStorage() {
   localStorage.setItem('user', stringifiedUserData);
   // TODO: Stringify and save inventory and plotGridState LIESL
   let stringifiedInventory = JSON.stringify(playerInventory);
-  localStorage.setItem('playerInventory',stringifiedInventory);
-  let stringifiedGrid = JSON.stringify(plotGridState); 
-  localStorage.setItem('plotGridState',stringifiedGrid);
+  localStorage.setItem('playerInventory', stringifiedInventory);
+  let stringifiedGrid = JSON.stringify(plotGridState);
+  localStorage.setItem('plotGridState', stringifiedGrid);
 }
 
 //--> DONE: function to replace cursor icon with the seed icon when a seed is selected from store/inventory LAUREN
@@ -129,13 +129,13 @@ function changeSelectedItem(itemSlug) {
 
 function retrievedUserData() {
   let stringifiedUserData = localStorage.getItem('user');
-  console.log('this is my user data',stringifiedUserData);
+  console.log('this is my user data', stringifiedUserData);
   let parsedUserData = JSON.parse(stringifiedUserData);
   let stringifiedInventory = localStorage.getItem('playerInventory');
-  console.log('this is my inventory data',stringifiedInventory);
+  console.log('this is my inventory data', stringifiedInventory);
   let parsedInventory = JSON.parse(stringifiedInventory);
   let stringifiedGrid = localStorage.getItem('plotGridState');
-  console.log('this is my plot grid data',stringifiedGrid);
+  console.log('this is my plot grid data', stringifiedGrid);
   let parsedGrid = JSON.parse(stringifiedGrid);
 
   return [parsedUserData, parsedInventory, parsedGrid]
@@ -144,36 +144,36 @@ function retrievedUserData() {
 //TODO: reconstructor function, loops through retrieved localStorage object(s) and re-instantiates them MICHAEL
 // The function retrievedUserData() is not complete
 
-function resonstructObjFromLocal(){
+function reconstructObjFromLocal() {
   let parsedObjects = retrievedUserData();
   let parsedGrid = parsedObjects[0];
   // for (let i = 0; i < parsedObjects.length; i++){
-    for (let j = 0; j < parsedGrid.length; j++) {
-      let parsedGrid = new LivePlant(
-        parsedGrid[j].cropSlug,
-        parsedGrid[j].age,
-        parsedGrid[j].needsWater,
-        parsedGrid[j].locationElem);
-    }
-
-    let parsedUser = parsedObjects[1];
-     user = new UserStats(
-      parsedUser.totalPlayTime,
-      parsedUser.totalMoneyGained,
-      parsedUser.cropsHarvested,
-      parsedUser.cropsGrown,
-      parsedUser.nuggetsLearned,
-      parsedUser.playerMoney);
-
-    let parsedInventory = parsedObjects[2];
-    playerInventory = parsedInventory
-    //   let parsedInventory = new Item(
-    //   Item[i].slug,
-    //   Item[i].title,
-    //   Item[i].sprite);
-
-    // allItems.push(myParsedInventory);
+  for (let j = 0; j < parsedGrid.length; j++) {
+    let parsedGrid = new LivePlant(
+      parsedGrid[j].cropSlug,
+      parsedGrid[j].age,
+      parsedGrid[j].needsWater,
+      parsedGrid[j].locationElem);
   }
+
+  let parsedUser = parsedObjects[1];
+  user = new UserStats(
+    parsedUser.totalPlayTime,
+    parsedUser.totalMoneyGained,
+    parsedUser.cropsHarvested,
+    parsedUser.cropsGrown,
+    parsedUser.nuggetsLearned,
+    parsedUser.playerMoney);
+    console.log(parsedObjects[1]);
+  let parsedInventory = parsedObjects[2];
+  playerInventory = parsedInventory
+  //   let parsedInventory = new Item(
+  //   Item[i].slug,
+  //   Item[i].title,
+  //   Item[i].sprite);
+
+  // allItems.push(myParsedInventory);
+}
 // }
 
 
@@ -181,7 +181,7 @@ function resonstructObjFromLocal(){
 // Constructor for crops
 function Crop(yieldQty, sellValue, growthTime, sprites, slug) {
   this.yieldQty = yieldQty,
-  this.sellValue = sellValue;
+    this.sellValue = sellValue;
   this.growthTime = growthTime;
   this.sprites = sprites;
   this.slug = slug;
@@ -191,19 +191,19 @@ function Crop(yieldQty, sellValue, growthTime, sprites, slug) {
 //Plant entity
 function LivePlant(cropSlug, age = 0, needsWater = false, locationElem) {
   this.cropSlug = cropSlug,
-  this.age = age,
-  this.fullyGrown = false;
+    this.age = age,
+    this.fullyGrown = false;
   this.needsWater = needsWater;
   this.locationElem = locationElem; //the DOM element of the plot space
   this.cropElem; //the DOM element of the crop image
 }
 
 // LivePlant method to render the plant
-LivePlant.prototype.renderPlant = function(ageStage = 'growth1'){
+LivePlant.prototype.renderPlant = function (ageStage = 'growth1') {
   let cropElement = document.createElement('img');
   cropElement.src = `../img/${this.cropSlug}_${ageStage}.png`;
-  cropElement.setAttribute('id',`${this.locationElem.id}-${this.cropSlug}`);
-  if(this.cropElem){
+  cropElement.setAttribute('id', `${this.locationElem.id}-${this.cropSlug}`);
+  if (this.cropElem) {
     this.locationElem.removeChild(this.cropElem);
   }
   this.locationElem.appendChild(cropElement);
@@ -216,20 +216,20 @@ LivePlant.prototype.killPlant = function () {
 };
 
 // This method checks growth stage and calls the renderPlant method with the growth stage as the argument
-LivePlant.prototype.evalGrowth = function(){
+LivePlant.prototype.evalGrowth = function () {
   let livePlantSlug = this.cropSlug;
   let referenceCrop = cropTypes.find(element => element.slug === livePlantSlug);
   let stage = 'growth1';
-  if (this.age >= referenceCrop.growthTime){
+  if (this.age >= referenceCrop.growthTime) {
     this.fullyGrown = true;
-    if(referenceCrop.slug === 'carrot'){
+    if (referenceCrop.slug === 'carrot') {
       stage = 'fullgrown';
-    } else{
+    } else {
       stage = 'produce';
     }
-  } else if (this.age >= (2/3)*referenceCrop.growthTime){
+  } else if (this.age >= (2 / 3) * referenceCrop.growthTime) {
     stage = 'growth3';
-  } else if (this.age >= (1/3)*referenceCrop.growthTime){
+  } else if (this.age >= (1 / 3) * referenceCrop.growthTime) {
     stage = 'growth2';
   }
   this.renderPlant(stage);
@@ -244,12 +244,12 @@ function Item(slug, title, sprite) {
 }
 
 //Tracks longterm user stats & money, used on the stats page and saved to localStorage
-function UserStats(playerMoney = 0) {
-  this.totalPlayTime;
-  this.totalMoneyGained; //money may be nuggets
-  this.cropsHarvested; //tracks harvest and sell
-  this.cropsGrown;
-  this.nuggetsLearned;
+function UserStats(totalPlayTime, totalMoneyGained ,cropsHarvested, cropsGrown, nuggetsLearned, playerMoney = 0) {
+  this.totalPlayTime = totalPlayTime;
+  this.totalMoneyGained = totalMoneyGained; //money may be nuggets
+  this.cropsHarvested = cropsHarvested; //tracks harvest and sell
+  this.cropsGrown = cropsGrown;
+  this.nuggetsLearned = nuggetsLearned;
   this.playerMoney = playerMoney;
 }
 
@@ -277,9 +277,6 @@ function handleClick(event) {
         sowSeedAtLocation(plotIndex, currentItemSelected);
       }
     }
-
-    console.log(plotIndex);
-    console.log(user.playerMoney);
   }
 
   else if (event.target.className === 'itemIcon') {
@@ -310,12 +307,12 @@ function sowSeedAtLocation(location, seedType) {
 window.setInterval(globalTick, 1000);
 
 
-function globalTick(){
+function globalTick() {
   // This is the event function to handle plant growth.
   // Per the event handler above, it fires every second.
   // It loops through the plotGridState array to call evalGrowth() method on any LivePlants
-  for (let i in plotGridState){
-    if(plotGridState[i] && plotGridState[i].fullyGrown !== true){
+  for (let i in plotGridState) {
+    if (plotGridState[i] && plotGridState[i].fullyGrown !== true) {
       plotGridState[i].age++;
       plotGridState[i].evalGrowth();
     }
@@ -327,39 +324,39 @@ function globalTick(){
 // TODO call localStorage retrieval function LIESL
 
 
-let stringifiedUser = localStorage.getItem('user');
-
-let parsedInt = JSON.parse(stringifiedUser);
-
-// TODO call object reconstructor function MICHAEL
-
-// TODO call object reconstructor function to reconstruct items after pulling from local storage
-resonstructObjFromLocal();
-
-
-if (user){
-  user = new UserStats;
-}
-
 
 //  sprite arrays not necessary
 //Feeding our Crop constructor new crops: function Crop(yieldQty, sellValue, growthTime, sprites, slug)
 let potato = new Crop(1, 40, 30, [], 'potato');
 let carrot = new Crop(1, 15, 15, [], 'carrot');
-let corn   = new Crop(3, 20, 45, [], 'corn');
+let corn = new Crop(3, 20, 45, [], 'corn');
 let tomato = new Crop(20, 5, 60, [], 'tomato');
 
 
 // Feeding new seed Items: potato, carrot, tomato, corn to Item constructor function: Item(slug, title, sprite)
-let potatoSeeds = new Item('potato','Potato Seeds', 'potatoseeds');
-let carrotSeeds = new Item('carrot','Carrot Seeds', 'carrotseeds');
-let cornSeeds = new Item('corn','Corn Seeds', 'cornseeds');
-let tomatoSeeds = new Item('tomato','Tomato Seeds', 'tomatoseeds');
+let potatoSeeds = new Item('potato', 'Potato Seeds', 'potatoseeds');
+let carrotSeeds = new Item('carrot', 'Carrot Seeds', 'carrotseeds');
+let cornSeeds = new Item('corn', 'Corn Seeds', 'cornseeds');
+let tomatoSeeds = new Item('tomato', 'Tomato Seeds', 'tomatoseeds');
 
 
 /// *********************** Functions called upon pageload *********************** 
 initPlotGrid();
 drawInventory(playerInventory);
+
+let stringifiedUser = localStorage.getItem('user');
+
+// let parsedInt = JSON.parse(stringifiedUser);
+
+if (localStorage.getItem(user)){
+  reconstructObjFromLocal();
+}
+
+
+if (user===undefined) {
+  user = new UserStats();
+}
+
 
 // *********************** event listeners *********************** 
 gameArea.addEventListener('click', handleClick);
