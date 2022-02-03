@@ -303,7 +303,11 @@ function handleClick(event) {
 function sowSeedAtLocation(location, seedType) {
   console.log('event', event.target.id);//event.target.id (JSON stores plot Id instead of entire locationElem)
   plotGridState[location] = new LivePlant(seedType, event.target.id, 0, false);
-  plotGridState[location].renderPlant('growth 1');
+  plotGridState[location].renderPlant('growth 1');\
+
+
+
+  
   changeSelectedItem(null);
   //save the plotgridstate
 }
