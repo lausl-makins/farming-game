@@ -2,7 +2,7 @@
   width: 192px;
   height: 192px;
   /* background-color: rgb(104, 79, 51); */
-  background-image: url("/img/dirt.png");
+  background-image: url("../img/dirt.png");
   background-size: cover;
 }
 
