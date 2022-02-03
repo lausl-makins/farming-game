@@ -383,7 +383,6 @@ function randomizeStoreContents() {
 
 // *************** FUNCTION CALLS/ OBJECT INSTANTIATION *********************
 
-//  sprite arrays not necessary
 //Feeding our Crop constructor new crops: function Crop(yieldQty, sellValue, growthTime, sprites, slug)
 let potato = new Crop(10, 20, 30, [], 'potato');
 let carrot = new Crop(1, 30, 15, [], 'carrot');
