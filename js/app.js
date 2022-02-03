@@ -151,15 +151,16 @@ function retrievedUserData() {
 function reconstructObjFromLocal() {
   let parsedObjects = retrievedUserData();
 
-  let parsedUser = parsedObjects[0];
+  user = parsedObjects[0];
   console.log(parsedObjects[0]);
-  user = new UserStats(
-    parsedUser.totalPlayTime,
-    parsedUser.totalMoneyGained,
-    parsedUser.cropsHarvested,
-    parsedUser.cropsGrown,
-    parsedUser.nuggetsLearned,
-    parsedUser.playerMoney);
+  // DISCUSS not necessary because the user object does not need to inherit any methods.
+  // let user = new UserStats(
+  //   parsedUser.totalPlayTime,
+  //   parsedUser.totalMoneyGained,
+  //   parsedUser.cropsHarvested,
+  //   parsedUser.cropsGrown,
+  //   parsedUser.nuggetsLearned,
+  //   parsedUser.playerMoney);
 
   let parsedInventory = parsedObjects[1];
   playerInventory = parsedInventory;
