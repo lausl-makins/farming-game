@@ -45,7 +45,6 @@ function renderChart() {
 }
 
 let tableElem;
-
 loadUser();
 renderChart();
 renderStatsTable();
@@ -96,8 +95,16 @@ function computeTimeString() {
     minutes = Math.floor(remainingSeconds/60);
     remainingSeconds -= minutes*60;
   }
+  let secString = String(remainingSeconds);
+  if (secString.length < 2){
+    secString = `0${secString}`;
+  }
+  let minString = String(minutes);
+  if (minString.length < 2){
+    minString = `0${minString}`;
+  }
   // Returns the time string in a template literal
-  return `${hours}:${minutes}:${remainingSeconds}`;
+  return `${hours}:${minString}:${secString}`;
 }
 
 // function addHeadersToTable(table) {
