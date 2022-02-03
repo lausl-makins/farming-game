@@ -15,18 +15,21 @@ let moneyDisplay = document.getElementById('moneyDisplay');
 
 let user = new UserStats();
 
+let currentItemSelected; //Tracks the slug of which seed or other item the user has clicked on, therefore readying it for planting. Used by SowSeedAtLocation()
+
 //Will not be saved, created at initialization:
 let cropTypes = []; //List of all possible crop types implemented
 let allItems = []; //List of all possible items the player could have in their inventory
 
 //Will be saved/loaded:
-let playerInventory = ['carrot_seeds', 'carrot_seeds', 'tomato_seeds']; //list of slugs
+let playerInventory = []; //list of slugs. Technically, this is the store's inventory
 let plotGridState = []; //list of LivePlant objects and empty spaces
 //add plant to specific index spot when planting
 //remove from index space when harvesting
 
-// DONE: variable to track which seed is selected for planting LAUREN
-let currentItemSelected; //Tracks the slug of which seed or other item the user has clicked on, therefore readying it for planting. Used by SowSeedAtLocation()
+let lastStoreUpdate = new Date(); //TODO:  Add this to our save file
+//lastStoreUpdate stores the last Date the store updated, so we can reroll it on a new day
+
 
 // FUNCTIONS
 
@@ -46,8 +49,14 @@ function givePlayerMoney(number) {
   renderPlayerMoney();
 }
 
-// Show player money\
-function renderPlayerMoney(){
+function spendPlayerMoney(number) {
+  user.playerMoney -= number;
+  // user.totalMoneyGained += number;
+  renderPlayerMoney();
+}
+
+// Show player money
+function renderPlayerMoney() {
   moneyDisplay.innerText = user.playerMoney + ' nuggets';
 }
 
@@ -60,6 +69,10 @@ function pushLocalStorage() {
   localStorage.setItem('playerInventory', stringifiedInventory);
   let stringifiedGrid = JSON.stringify(plotGridState);
   localStorage.setItem('plotGridState', stringifiedGrid);
+
+  //TODO:  Only the pushing to local works right now for lastStoreUpdate, we still need to implement loading it
+  let stringifiedLastStoreUpdate = JSON.stringify(lastStoreUpdate);
+  localStorage.setItem('lastStoreUpdate', stringifiedLastStoreUpdate);
 }
 
 //--> DONE: function to replace cursor icon with the seed icon when a seed is selected from store/inventory LAUREN
@@ -69,65 +82,47 @@ function changeCursor(newCursorFilename) {
   //newCursor should be either the name of the item that the cursor changes to or it should be null, which makes the cursor the default one again. 
   let cursorElement = document.getElementsByTagName('body')[0];
   if (newCursorFilename !== null) {
-    cursorElement.style.cursor = `url('/img/${newCursorFilename}.png'), auto`;
+    cursorElement.style.cursor = `url('/img/seeds_${newCursorFilename}.png'), auto`;
   }
   else {
-    cursorElement.style.cursor = 'pointer';
+    cursorElement.style.cursor = 'default';
   }
 }
 
 
 // **************************************************************  I N V E N T O R Y     F U N C T I O N S **************************************************************
-//displays/refreshes the player's inventory as buttons
+//displays/refreshes the store's inventory as buttons.
 function drawInventory(inventory) {
   //inventoryGrid is our dom object
-
-  playerInventory = ['carrot', 'carrot', 'tomato', 'tomato'];
+  console.log('drawing inventory');
 
   //clear out all inventoryslots from inventorygrid
-  for (let i = 0; i < inventoryGrid.children.length; i++) {
+  for (let i = 1; i < inventoryGrid.children.length; i++) {
     inventoryGrid.removeChild(inventoryGrid.lastChild);
   }
 
   //draws new inventory slots for each item in our inv
   for (let i = 0; i < playerInventory.length; i++) {
-    // console.log(`Found item in player inventory: ${playerInventory[i]}`);
+    console.log(`Found item in store inventory: ${playerInventory[i]}`);
 
     let newSlot = document.createElement('div'); //Make a new slot for the item
     newSlot.className = 'inventorySlot';
+    newSlot.innerText = `Price: ${allItems.find(element => element.slug === playerInventory[i]).seedCost}`;
 
     let newItemIcon = document.createElement('img'); //Make an image to display the item
-    newItemIcon.src = 'img/seeds_tomato.png'; //Set the icon's source; TODO:  Template literal to dynamically set icon
+    newItemIcon.src = `img/seeds_${playerInventory[i]}.png`; //Set the icon's source;
     newItemIcon.className = 'itemIcon';
     newItemIcon.id = playerInventory[i];
 
     newSlot.appendChild(newItemIcon);
-
     inventoryGrid.appendChild(newSlot);
   }
-  //inventoryslots get onclicks for ChangeSelectedItem(); or whatever
-
 }
-
-// function addItemToInventory(itemSlug) {
-
-// }
-
-// function removeItemFromInventory(itemSlug) {
-
-// }
 
 function changeSelectedItem(itemSlug) {
   currentItemSelected = itemSlug;
   changeCursor(itemSlug);
-
 }
-
-// function tryUseSelectedItem() {
-
-// }
-
-
 
 // This function retrieves localStorage data, returns the objects in a 3 element array [plotGridState, userData, inventory]  LIESL
 
@@ -143,6 +138,12 @@ function retrievedUserData() {
   let parsedGrid = JSON.parse(stringifiedGrid);
 
   return [parsedUserData, parsedInventory, parsedGrid];
+}
+
+function retrieveLastStoreUpdate() {
+  let stringifiedLastStoreUpdate = localStorage.getItem('lastStoreUpdate');
+  console.log('This is my last store update data', stringifiedLastStoreUpdate);
+  lastStoreUpdate = JSON.parse(stringifiedLastStoreUpdate);
 }
 
 //TODO: reconstructor function, loops through retrieved localStorage object(s) and re-instantiates them MICHAEL
@@ -161,13 +162,13 @@ function reconstructObjFromLocal() {
 
   for (let j = 0; j < parsedGrid.length; j++) {
     let retrievedCrop = parsedGrid[j];
-    if(retrievedCrop !== null){
+    if (retrievedCrop !== null) {
       let restoredPlant = new LivePlant(
         retrievedCrop.cropSlug,
         retrievedCrop.locationIndex,
         retrievedCrop.age);
       plotGridState[j] = restoredPlant;
-      console.log(`Added retrievedCrop ${retrievedCrop.cropSlug} to index ${j} in plotGridState`);
+      // console.log(`Added retrievedCrop ${retrievedCrop.cropSlug} to index ${j} in plotGridState`);
     }
   }
 }
@@ -178,7 +179,7 @@ function reconstructObjFromLocal() {
 // Constructor for crops
 function Crop(yieldQty, sellValue, growthTime, sprites, slug) {
   this.yieldQty = yieldQty,
-  this.sellValue = sellValue;
+    this.sellValue = sellValue;
   this.growthTime = growthTime;
   this.sprites = sprites;
   this.slug = slug;
@@ -188,8 +189,8 @@ function Crop(yieldQty, sellValue, growthTime, sprites, slug) {
 //Plant entity
 function LivePlant(cropSlug, locationIndex, age = 0, needsWater = false) {
   this.cropSlug = cropSlug,
-  this.age = age,
-  this.fullyGrown = false;
+    this.age = age,
+    this.fullyGrown = false;
   this.needsWater = needsWater;
   this.locationIndex = locationIndex; //the index which represents it's location in the plot grid
   // It's stored as a property since the LivePlant's methods need to perform DOM manipulation on itself
@@ -200,7 +201,7 @@ LivePlant.prototype.renderPlant = function (ageStage = 'growth1') {
   let cropElem = document.createElement('img');
   // Get and assign the plant's parent element to a temporary variable
   let locationElem = document.getElementById(`${this.locationIndex}-plot`);
-  cropElem.src = `../img/${this.cropSlug}_${ageStage}.png`;
+  cropElem.src = `img/${this.cropSlug}_${ageStage}.png`; //TODO test to make sure this was fixed for web deployment so images aren't broken
   // This ID must start with a number matching its index in the plotGridState
   // This way our onClick event handler behaves in a predictable way even if a crop is on top of a plot
   cropElem.id = `${this.locationIndex}-${this.cropSlug}`;
@@ -242,15 +243,16 @@ LivePlant.prototype.evalGrowth = function () {
 };
 
 //Items appear in the inventory.  For now only Seeds are items
-function Item(slug, title, sprite) {
+function Item(slug, title, sprite, seedCost) {
   this.slug = slug;
   this.title = title;
   this.sprite = sprite;
+  this.seedCost = seedCost;
   allItems.push(this);
 }
 
 //Tracks longterm user stats & money, used on the stats page and saved to localStorage
-function UserStats(totalPlayTime, totalMoneyGained ,cropsHarvested, cropsGrown, nuggetsLearned, playerMoney = 0) {
+function UserStats(totalPlayTime, totalMoneyGained, cropsHarvested, cropsGrown, nuggetsLearned, playerMoney = 200) {
   this.totalPlayTime = totalPlayTime;
   this.totalMoneyGained = totalMoneyGained; //money may be nuggets
   this.cropsHarvested = cropsHarvested; //tracks harvest and sell
@@ -276,7 +278,7 @@ function handleClick(event) {
       // Adding money to user's money
       givePlayerMoney(150);
     }
-    else if (!Number.isNaN(plotIndex) && typeof(currentItemSelected) === 'string') { // If the clicked plot is not inhabited by a LivePlant (plotIndex is N) then we'll sow a seed in it.
+    else if (!Number.isNaN(plotIndex) && typeof (currentItemSelected) === 'string') { // If the clicked plot is not inhabited by a LivePlant (plotIndex is N) then we'll sow a seed in it.
       console.log('Clicked empty plot');
       if (currentItemSelected !== null) {
         sowSeedAtLocation(plotIndex, currentItemSelected);
@@ -286,7 +288,9 @@ function handleClick(event) {
 
   else if (event.target.className === 'itemIcon') {
     console.log('Clicked on inventory item');
-    changeSelectedItem(event.target.id);
+
+    tryPurchaseItem(event.target.id);
+    // changeSelectedItem(event.target.id);
   }
 
   //If we didn't click on the above, let's deselect our current item.
@@ -295,9 +299,16 @@ function handleClick(event) {
     changeSelectedItem(null);
   }
   pushLocalStorage(); //saving user data
-  //If we clicked on an item icon:
 }
 
+function tryPurchaseItem(item) {
+  //if we have enough money to buy, 
+  let itemCost = allItems.find(element => element.slug === item).seedCost;
+  if (user.playerMoney >= itemCost) {
+    changeSelectedItem(item);
+    spendPlayerMoney(itemCost);
+  }
+}
 
 // Event Handler Helper functions, which will inherit and use the originating event object
 
@@ -322,6 +333,85 @@ function globalTick() {
   }
 }
 
+// *********************** Store-Related Stuff ********************************
+
+
+// TODO: our new day checking still isn't working right :(
+function initializeStore() {
+  let currentDate = new Date(); //Temp variable to grab the system date
+  currentDate.getDay();
+
+  if (lastStoreUpdate!==null){
+
+    //next line SHOULD check if the dates are different; new day condition "currentdate" is just a placholder
+    if (currentDate===lastStoreUpdate) {
+      console.log('New day detected');
+      randomizeStoreContents(); //If it's a new day, we need to reroll what's in the store for the day. Fills playerInventory with random items
+      lastStoreUpdate = currentDate; //Now we can use lastStoreUpdate to save and compare tomorrow's date
+      // console.log(lastStoreUpdate);
+    }
+    else {
+      //load store contents from memory
+      console.log('Same day detected');
+    }
+  }
+  if (playerInventory.length===0){
+    randomizeStoreContents();
+  }
+  drawInventory(playerInventory);
+}
+
+// function checkIfNewDay() { //returns true if lastStoreUpdate is a different day than the system's current time, false otherwise
+//   // let currentDate = new Date();
+//   // currentDate.getDay(); //grabs the real system time
+
+//   // let tempCurrentDate = currentdate.getDay();
+//   // let tempLastDate = lastStoreUpdate.getDay();
+
+//   if (lastStoreUpdate !== null) {
+//     console.log(`Last saved date: ${lastStoreUpdate.getDay()}
+//     Current date: ${currentDate.getDay()}`);
+//   }
+
+
+//   if (lastStoreUpdate === null) { //If we don't have anything saved, it's the users first time playing, so it's treated as a new day
+//     console.log('null store found');
+//     return true;
+//   }
+
+//   else if (lastStoreUpdate.getDay === currentDate.getDay) { //if the store updated today, we dont need to reroll it
+//     console.log('Store dates match, no need to update store');
+//     return false;
+//   }
+//   else { //if lastStoreUpdate !== currentDate, reroll store
+//     console.log('Different dates detected, rerolling store');
+//     return true;
+//   }
+// }
+
+
+// // Date checker
+// const datesAreOnSameDay = (first, second) =>
+//   first.getFullYear() === second.getFullYear() &&
+//   first.getMonth() === second.getMonth() &&
+//   first.getDate() === second.getDate();
+// // end date checker
+
+
+const qtyItemsInStore = 3; //how many items we want the store to have per day
+
+function randomizeStoreContents() {
+  console.log('Randomizing store contents...')
+  playerInventory = []; //yes playerInventory represents the store contents lol
+
+  for (let i = 0; i < qtyItemsInStore; i++) {
+    playerInventory.push(allItems[Math.floor(Math.random() * allItems.length)].slug); //gives the store a random item.
+    console.log(`${allItems[1].slug}`);
+    // TODO:  prevent duplicates
+  }
+}
+
+
 // *********************** FUNCTION CALLS/ OBJECT INSTANTIATION ********************************
 
 //  sprite arrays not necessary
@@ -332,11 +422,11 @@ let corn = new Crop(3, 20, 45, [], 'corn');
 let tomato = new Crop(20, 5, 60, [], 'tomato');
 
 
-// Feeding new seed Items: potato, carrot, tomato, corn to Item constructor function: Item(slug, title, sprite)
-let potatoSeeds = new Item('potato', 'Potato Seeds', 'potatoseeds');
-let carrotSeeds = new Item('carrot', 'Carrot Seeds', 'carrotseeds');
-let cornSeeds = new Item('corn', 'Corn Seeds', 'cornseeds');
-let tomatoSeeds = new Item('tomato', 'Tomato Seeds', 'tomatoseeds');
+// Feeding new seed Items: potato, carrot, tomato, corn to Item constructor function: Item(slug, title, sprite, seedCost)
+let potatoSeeds = new Item('potato', 'Potato Seeds', 'potatoseeds', 100);
+let carrotSeeds = new Item('carrot', 'Carrot Seeds', 'carrotseeds', 40);
+let cornSeeds = new Item('corn', 'Corn Seeds', 'cornseeds', 100);
+let tomatoSeeds = new Item('tomato', 'Tomato Seeds', 'tomatoseeds', 50);
 
 
 /// *********************** Functions called upon pageload ***********************
@@ -347,18 +437,20 @@ initPlotGrid();
 
 // let parsedInt = JSON.parse(stringifiedUser);
 
-if (localStorage.getItem('user')){
+if (localStorage.getItem('user')) {
   reconstructObjFromLocal();
+  retrieveLastStoreUpdate(); //store update data is in a seperate function so I didn't mess up the object format lol
 }
 
 
-if (user===undefined) {
+if (user === undefined) {
   user = new UserStats();
 }
 
-drawInventory(playerInventory);
+initializeStore();
 renderPlayerMoney();
 globalTick();
+
 
 // *********************** event listeners ***********************
 gameArea.addEventListener('click', handleClick);
