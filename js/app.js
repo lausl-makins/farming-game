@@ -153,21 +153,12 @@ function reconstructObjFromLocal() {
 
   user = parsedObjects[0];
   console.log(parsedObjects[0]);
-  // DISCUSS not necessary because the user object does not need to inherit any methods.
-  // let user = new UserStats(
-  //   parsedUser.totalPlayTime,
-  //   parsedUser.totalMoneyGained,
-  //   parsedUser.cropsHarvested,
-  //   parsedUser.cropsGrown,
-  //   parsedUser.nuggetsLearned,
-  //   parsedUser.playerMoney);
 
   let parsedInventory = parsedObjects[1];
   playerInventory = parsedInventory;
 
   let parsedGrid = parsedObjects[2];
-  // for (let i = 0; i < parsedObjects.length; i++){
-  // console.log(parsedGrid);
+
   for (let j = 0; j < parsedGrid.length; j++) {
     let retrievedCrop = parsedGrid[j];
     if(retrievedCrop !== null){
@@ -179,14 +170,8 @@ function reconstructObjFromLocal() {
       console.log(`Added retrievedCrop ${retrievedCrop.cropSlug} to index ${j} in plotGridState`);
     }
   }
-  //   let parsedInventory = new Item(
-  //   Item[i].slug,
-  //   Item[i].title,
-  //   Item[i].sprite);
-
-  // allItems.push(myParsedInventory);
 }
-// }
+
 
 
 // CONSTRUCTORS AND METHODS
