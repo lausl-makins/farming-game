@@ -272,7 +272,7 @@ function handleClick(event) {
     let plotIndex = Number.parseInt(event.target.id);
 
     // If the clicked plot is inhabited by a LivePlant, we'll kill/harvest the plant and get our money from it
-    if (event.target.className === 'crop') {
+    if (event.target.className === 'crop' && plotGridState[plotIndex].fullyGrown) {
       let clickedPlantSlug = plotGridState[plotIndex].cropSlug;
       let slugIndex = allCropSlugs.indexOf(clickedPlantSlug);
       let referenceCrop = cropTypes.find(element => element.slug === clickedPlantSlug);
