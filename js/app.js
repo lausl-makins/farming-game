@@ -370,13 +370,17 @@ function initializeStore() {
 const qtyItemsInStore = 3; //how many items we want the store to have per day
 
 function randomizeStoreContents() {
-  console.log('Randomizing store contents...')
+  console.log('Randomizing store contents...');
   playerInventory = []; //yes playerInventory represents the store contents lol
 
   for (let i = 0; i < qtyItemsInStore; i++) {
-    playerInventory.push(allItems[Math.floor(Math.random() * allItems.length)].slug); //gives the store a random item.
+    let randomItem;
+    // Generates a randomItem, but this do...while loop will try again if it's already in the inventory
+    do {
+      randomItem = allItems[Math.floor(Math.random() * allItems.length)].slug;
+    } while (playerInventory.includes(randomItem));
+    playerInventory.push(); //gives the store a random item.
     console.log(`${allItems[1].slug}`);
-    // TODO:  prevent duplicates
   }
 }
 
