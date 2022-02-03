@@ -14,9 +14,6 @@ let moneyDisplay = document.getElementById('moneyDisplay');
 // GLOBAL VARIABLES
 let user;
 
-let currentDateCode = getCurrentDateCode();
-// Gets and stores the current date in a string format 'YYYYMMDD' ei '202223' for Feb 3rd 2022
-
 let currentItemSelected; //Tracks the slug of which seed or other item the user has clicked on, therefore readying it for planting. Used by SowSeedAtLocation()
 
 //Will not be saved, created at initialization:
@@ -29,6 +26,10 @@ let playerInventory = []; //list of slugs. Technically, this is the store's inve
 let plotGridState = []; //list of LivePlant objects and empty spaces
 //add plant to specific index spot when planting
 //remove from index space when harvesting
+
+let lastStoreUpdate = new Date(); //TODO:  Add this to our save file
+//lastStoreUpdate stores the last Date the store updated, so we can reroll it on a new day
+
 
 // FUNCTIONS
 
@@ -70,8 +71,8 @@ function pushLocalStorage() {
   localStorage.setItem('plotGridState', stringifiedGrid);
 
   //TODO:  Only the pushing to local works right now for lastStoreUpdate, we still need to implement loading it
-  let stringifiedDateCode = JSON.stringify(currentDateCode);
-  localStorage.setItem('lastStoreUpdate', stringifiedDateCode);
+  let stringifiedLastStoreUpdate = JSON.stringify(lastStoreUpdate);
+  localStorage.setItem('lastStoreUpdate', stringifiedLastStoreUpdate);
 }
 
 //--> DONE: function to replace cursor icon with the seed icon when a seed is selected from store/inventory LAUREN
@@ -142,7 +143,7 @@ function retrievedUserData() {
 function retrieveLastStoreUpdate() {
   let stringifiedLastStoreUpdate = localStorage.getItem('lastStoreUpdate');
   console.log('This is my last store update data', stringifiedLastStoreUpdate);
-  return JSON.parse(stringifiedLastStoreUpdate);
+  lastStoreUpdate = JSON.parse(stringifiedLastStoreUpdate);
 }
 
 //TODO: reconstructor function, loops through retrieved localStorage object(s) and re-instantiates them MICHAEL
@@ -172,20 +173,13 @@ function reconstructObjFromLocal() {
   }
 }
 
-function getCurrentDateCode() {
-  let today = new Date();
-  let dateCode = String(today.getFullYear());
-  dateCode += today.getMonth()+1;
-  dateCode += today.getDate();
-  return dateCode;
-}
 
 
 // CONSTRUCTORS AND METHODS
 // Constructor for crops
 function Crop(yieldQty, sellValue, growthTime, sprites, slug) {
   this.yieldQty = yieldQty,
-  this.sellValue = sellValue;
+    this.sellValue = sellValue;
   this.growthTime = growthTime;
   this.sprites = sprites;
   this.slug = slug;
@@ -196,8 +190,8 @@ function Crop(yieldQty, sellValue, growthTime, sprites, slug) {
 //Plant entity
 function LivePlant(cropSlug, locationIndex, age = 0, needsWater = false) {
   this.cropSlug = cropSlug,
-  this.age = age,
-  this.fullyGrown = false;
+    this.age = age,
+    this.fullyGrown = false;
   this.needsWater = needsWater;
   this.locationIndex = locationIndex; //the index which represents it's location in the plot grid
   // It's stored as a property since the LivePlant's methods need to perform DOM manipulation on itself
@@ -236,7 +230,11 @@ LivePlant.prototype.evalGrowth = function () {
   let stage = 'growth1';
   if (this.age >= referenceCrop.growthTime) {
     this.fullyGrown = true;
-    stage = 'produce';
+    if (referenceCrop.slug === 'carrot') {
+      stage = 'fullgrown';
+    } else {
+      stage = 'produce';
+    }
   } else if (this.age >= (2 / 3) * referenceCrop.growthTime) {
     stage = 'growth3';
   } else if (this.age >= (1 / 3) * referenceCrop.growthTime) {
@@ -274,6 +272,7 @@ function handleClick(event) {
 
   //If we clicked on a plot:
   if (event.target.className.includes('plot') || event.target.className.includes('crop')) {
+    console.log('clicked on plot');
     let plotIndex = Number.parseInt(event.target.id);
 
     // If the clicked plot is inhabited by a LivePlant, we'll kill/harvest the plant and get our money from it
@@ -287,8 +286,8 @@ function handleClick(event) {
       // Adding money to user's money
       givePlayerMoney(referenceCrop.yieldQty * referenceCrop.sellValue);
     }
-    // If the clicked plot is not inhabited by a LivePlant (plotIndex is NaN) and we have a seed selected, then we'll sow that seed in it.
-    else if (!Number.isNaN(plotIndex) && typeof (currentItemSelected) === 'string') {
+    else if (!Number.isNaN(plotIndex) && typeof (currentItemSelected) === 'string') { // If the clicked plot is not inhabited by a LivePlant (plotIndex is N) then we'll sow a seed in it.
+      console.log('Clicked empty plot');
       if (currentItemSelected !== null) {
         sowSeedAtLocation(plotIndex, currentItemSelected);
       }
@@ -296,22 +295,24 @@ function handleClick(event) {
   }
 
   else if (event.target.className === 'itemIcon') {
+    console.log('Clicked on inventory item');
 
     tryPurchaseItem(event.target.id);
+    // changeSelectedItem(event.target.id);
   }
 
   //If we didn't click on the above, let's deselect our current item.
   else {
+    console.log('Clicked somewhere not meaningful');
     changeSelectedItem(null);
   }
   pushLocalStorage(); //saving user data
 }
 
 function tryPurchaseItem(item) {
-  //if we have enough money to buy,
+  //if we have enough money to buy, 
   let itemCost = allItems.find(element => element.slug === item).seedCost;
-  // If the user has the money and has not already selected a seed to plant
-  if (user.playerMoney >= itemCost && typeof (currentItemSelected) !== 'string') {
+  if (user.playerMoney >= itemCost) {
     changeSelectedItem(item);
     spendPlayerMoney(itemCost);
   }
@@ -344,16 +345,19 @@ function globalTick() {
 // *********************** Store-Related Stuff ********************************
 
 
-// Initializes the store, randomizing the store contents if the user has not played today
+// TODO: our new day checking still isn't working right :(
 function initializeStore() {
-  let lastStoreUpdate = retrieveLastStoreUpdate();
+  let currentDate = new Date(); //Temp variable to grab the system date
+  currentDate.getDay();
 
   if (lastStoreUpdate!==null){
 
-    // Checks if global variable currentDateCode does NOT equal the previous session's day
-    if (currentDateCode!==lastStoreUpdate) {
+    //next line SHOULD check if the dates are different; new day condition "currentdate" is just a placholder
+    if (currentDate===lastStoreUpdate) {
       console.log('New day detected');
-      randomizeStoreContents(); //If it's a new day, we need to reroll what's in the store
+      randomizeStoreContents(); //If it's a new day, we need to reroll what's in the store for the day. Fills playerInventory with random items
+      lastStoreUpdate = currentDate; //Now we can use lastStoreUpdate to save and compare tomorrow's date
+      // console.log(lastStoreUpdate);
     }
     else {
       //load store contents from memory
@@ -365,6 +369,42 @@ function initializeStore() {
   }
   drawInventory(playerInventory);
 }
+
+// function checkIfNewDay() { //returns true if lastStoreUpdate is a different day than the system's current time, false otherwise
+//   // let currentDate = new Date();
+//   // currentDate.getDay(); //grabs the real system time
+
+//   // let tempCurrentDate = currentdate.getDay();
+//   // let tempLastDate = lastStoreUpdate.getDay();
+
+//   if (lastStoreUpdate !== null) {
+//     console.log(`Last saved date: ${lastStoreUpdate.getDay()}
+//     Current date: ${currentDate.getDay()}`);
+//   }
+
+
+//   if (lastStoreUpdate === null) { //If we don't have anything saved, it's the users first time playing, so it's treated as a new day
+//     console.log('null store found');
+//     return true;
+//   }
+
+//   else if (lastStoreUpdate.getDay === currentDate.getDay) { //if the store updated today, we dont need to reroll it
+//     console.log('Store dates match, no need to update store');
+//     return false;
+//   }
+//   else { //if lastStoreUpdate !== currentDate, reroll store
+//     console.log('Different dates detected, rerolling store');
+//     return true;
+//   }
+// }
+
+
+// // Date checker
+// const datesAreOnSameDay = (first, second) =>
+//   first.getFullYear() === second.getFullYear() &&
+//   first.getMonth() === second.getMonth() &&
+//   first.getDate() === second.getDate();
+// // end date checker
 
 
 const qtyItemsInStore = 3; //how many items we want the store to have per day
@@ -381,21 +421,21 @@ function randomizeStoreContents() {
 }
 
 
-// *************** FUNCTION CALLS/ OBJECT INSTANTIATION *********************
+// *********************** FUNCTION CALLS/ OBJECT INSTANTIATION ********************************
 
 //  sprite arrays not necessary
 //Feeding our Crop constructor new crops: function Crop(yieldQty, sellValue, growthTime, sprites, slug)
-let potato = new Crop(10, 20, 30, [], 'potato');
-let carrot = new Crop(1, 30, 15, [], 'carrot');
-let corn = new Crop(3, 80, 45, [], 'corn');
+let potato = new Crop(1, 40, 30, [], 'potato');
+let carrot = new Crop(1, 15, 15, [], 'carrot');
+let corn = new Crop(3, 20, 45, [], 'corn');
 let tomato = new Crop(20, 5, 60, [], 'tomato');
 
 
 // Feeding new seed Items: potato, carrot, tomato, corn to Item constructor function: Item(slug, title, sprite, seedCost)
 let potatoSeeds = new Item('potato', 'Potato Seeds', 'potatoseeds', 100);
-let carrotSeeds = new Item('carrot', 'Carrot Seeds', 'carrotseeds', 10);
-let cornSeeds = new Item('corn', 'Corn Seeds', 'cornseeds', 80);
-let tomatoSeeds = new Item('tomato', 'Tomato Seeds', 'tomatoseeds', 40);
+let carrotSeeds = new Item('carrot', 'Carrot Seeds', 'carrotseeds', 40);
+let cornSeeds = new Item('corn', 'Corn Seeds', 'cornseeds', 100);
+let tomatoSeeds = new Item('tomato', 'Tomato Seeds', 'tomatoseeds', 50);
 
 /// *********************** Functions called upon pageload ***********************
 
@@ -407,6 +447,7 @@ initPlotGrid();
 
 if (localStorage.getItem('user')) {
   reconstructObjFromLocal();
+  retrieveLastStoreUpdate(); //store update data is in a seperate function so I didn't mess up the object format lol
 }
 
 
