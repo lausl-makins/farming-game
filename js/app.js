@@ -47,11 +47,11 @@ function givePlayerMoney(number) {
 }
 
 
+// DONE: Stringify and save inventory and plotGridState 
 //This function puts all of our save state and user data into local storage.
 function pushLocalStorage() {
   let stringifiedUserData = JSON.stringify(user);
   localStorage.setItem('user', stringifiedUserData);
-  // TODO: Stringify and save inventory and plotGridState LIESL
   let stringifiedInventory = JSON.stringify(playerInventory);
   localStorage.setItem('playerInventory', stringifiedInventory);
   let stringifiedGrid = JSON.stringify(plotGridState);
@@ -125,9 +125,9 @@ function changeSelectedItem(itemSlug) {
 
 
 
-//TODO: function to retrieve localStorage data, returns the objects in a 3 element array [plotGridState, userData, inventory]  LIESL
+//DONE: function to retrieve localStorage data, returns the objects in a 3 element array 
 
-function retrievedUserData() {
+function retrievedData() {
   let stringifiedUserData = localStorage.getItem('user');
   console.log('this is my user data', stringifiedUserData);
   let parsedUserData = JSON.parse(stringifiedUserData);
@@ -141,27 +141,25 @@ function retrievedUserData() {
   return [parsedUserData, parsedInventory, parsedGrid];
 }
 
-//TODO: reconstructor function, loops through retrieved localStorage object(s) and re-instantiates them MICHAEL
-// The function retrievedUserData() is not complete
+//DONE: reconstructor function, loops through retrieved localStorage object(s) and re-instantiates them 
 
 function reconstructObjFromLocal() {
-  let parsedObjects = retrievedUserData();
+  let parsedObjects = retrievedData();
   let parsedGrid = parsedObjects[2];
   // for (let i = 0; i < parsedObjects.length; i++){
-  console.log(parsedGrid);
   for (let j = 0; j < parsedGrid.length; j++) {
     if(parsedGrid[j] !== null){
     let newPlant = new LivePlant(
       parsedGrid[j].cropSlug,
-      // parsedGrid[j].locationElem,
-      // parsedGrid[j].needsWater,
+      parsedGrid[j].locationElem,
+      parsedGrid[j].needsWater,
       parsedGrid[j].age);
       plotGridState[j] = newPlant;
+      newPlant.renderPlant(newPlant.ageStage);//renders new plant no matter ageStage (even after refresh)
     }
   }
 
   let parsedUser = parsedObjects[0];
-  console.log(parsedObjects[0]);
   user = new UserStats(
     parsedUser.totalPlayTime,
     parsedUser.totalMoneyGained,
@@ -170,7 +168,7 @@ function reconstructObjFromLocal() {
     parsedUser.nuggetsLearned,
     parsedUser.playerMoney);
   let parsedInventory = parsedObjects[1];
-
+  moneyDisplay.innerText = user.playerMoney + ' nuggets';//calls to render money display upon refresh
   playerInventory = parsedInventory;
   //   let parsedInventory = new Item(
   //   Item[i].slug,
@@ -203,21 +201,24 @@ function LivePlant(cropSlug, locationElem, age = 0, needsWater = false) {
   this.cropElem; //the DOM element of the crop image
 }
 
+//got rid of growth 1
 // LivePlant method to render the plant
-LivePlant.prototype.renderPlant = function (ageStage = 'growth1') {
+LivePlant.prototype.renderPlant = function (ageStage) {
   let cropElement = document.createElement('img');
   cropElement.src = `../img/${this.cropSlug}_${ageStage}.png`;
-  cropElement.setAttribute('id', `${this.locationElem.id}-${this.cropSlug}`);
-  if (this.cropElem) {
-    this.locationElem.removeChild(this.cropElem);
-  }
-  this.locationElem.appendChild(cropElement);
-  this.cropElem = cropElement;
+  cropElement.setAttribute('id', `${this.locationElem}`);//deleted crop slug so picture is not "undefined"
+  let realLocationElem = document.getElementById(this.locationElem);//new variable so JSON stores it by id, locationElem
+    if (this.cropElem) {
+      realLocationElem.removeChild(this.cropElem);
+    }
+    realLocationElem.appendChild(cropElement);//reference to new variable JSON stores
+    this.cropElem = cropElement;
 };
 
 //*************     commit plant crime     *****************//
 LivePlant.prototype.killPlant = function () {
-  this.locationElem.removeChild(this.cropElem);
+  let realLocationElem = document.getElementById(this.locationElem);//reference to new variable JSON stores
+  realLocationElem.removeChild(this.cropElem);
 };
 
 // This method checks growth stage and calls the renderPlant method with the growth stage as the argument
@@ -264,20 +265,18 @@ function handleClick(event) {
   console.log(event.target);
 
   //If we clicked on a plot:
+  console.log(event.target.className, event.target.id);
   if (event.target.className.includes('plot') || event.target.id.includes('plot')) {
-    console.log('clicked on plot');
     let plotIndex = Number.parseInt(event.target.id);
 
     // If the clicked plot is inhabited by a LivePlant, we'll kill/harvest the plant and get our money from it
     if (plotGridState[plotIndex] !== undefined) {
-      console.log(plotGridState);
       plotGridState[plotIndex].killPlant();
       plotGridState[plotIndex] = undefined;
       // Adding money to user's money
       givePlayerMoney(150);
     }
     else if (!Number.isNaN(plotIndex)) { // If the clicked plot is not inhabited by a LivePlant, aka plotIndex is NaN, then we'll sow a seed in it.
-      console.log('Clicked empty plot');
       if (currentItemSelected !== null) {
         sowSeedAtLocation(plotIndex, currentItemSelected);
       }
@@ -285,7 +284,6 @@ function handleClick(event) {
   }
 
   else if (event.target.className === 'itemIcon') {
-    console.log('Clicked on inventory item');
     changeSelectedItem(event.target.id); //TODO:  make this dynamic
   }
 
@@ -303,8 +301,9 @@ function handleClick(event) {
 
 //Function called when player sows seeds
 function sowSeedAtLocation(location, seedType) {
-  plotGridState[location] = new LivePlant(seedType, event.target, 0, false);
-  plotGridState[location].renderPlant();
+  console.log('event', event.target.id);//event.target.id (JSON stores plot Id instead of entire locationElem)
+  plotGridState[location] = new LivePlant(seedType, event.target.id, 0, false);
+  plotGridState[location].renderPlant('growth 1');
   changeSelectedItem(null);
   //save the plotgridstate
 }
@@ -353,8 +352,10 @@ let stringifiedUser = localStorage.getItem('user');
 
 // let parsedInt = JSON.parse(stringifiedUser);
 
-if (localStorage.getItem('user')){
+if (stringifiedUser){
   reconstructObjFromLocal();
+} else {
+  givePlayerMoney(0);//calls player money function for user local storage
 }
 
 
