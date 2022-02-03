@@ -27,3 +27,13 @@ CSS Font
 
 [MDN: Array.prototype.find()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/find)
 MDN reference for the .find() array method
+
+## Fun Fact Resources
+[Tomato Fun Facts](https://www.campbellsoup.co.uk/blog/fun-facts-about-tomatoes/)
+
+[Carrot Fun Facts](https://www.sciencekids.co.nz/sciencefacts/food/carrots.html)
+
+[Corn Fun Facts](https://www.freshcityfarsm.com/blogs/9-facts-you-might-not-know-about-corn)
+
+[Potato Fun Facts](https://www.foodrepublic.com/2014/12/22/10-thing-you-probably-didnt-know-about-potatoes/)
+
