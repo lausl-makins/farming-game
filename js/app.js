@@ -80,7 +80,7 @@ function changeCursor(newCursorFilename) {
   //newCursor should be either the name of the item that the cursor changes to or it should be null, which makes the cursor the default one again. 
   let cursorElement = document.getElementsByTagName('body')[0];
   if (newCursorFilename !== null) {
-    cursorElement.style.cursor = `url('/img/seeds_${newCursorFilename}.png'), auto`;
+    cursorElement.style.cursor = `url('img/seeds_${newCursorFilename}.png'), auto`;
   }
   else {
     cursorElement.style.cursor = 'default';
