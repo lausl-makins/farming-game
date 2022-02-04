@@ -50,7 +50,6 @@ function givePlayerMoney(number) {
 
 function spendPlayerMoney(number) {
   user.playerMoney -= number;
-  // user.totalMoneyGained += number;
   renderPlayerMoney();
 }
 
@@ -93,7 +92,6 @@ function changeCursor(newCursorFilename) {
 //displays/refreshes the store's inventory as buttons.
 function drawInventory(inventory) {
   //inventoryGrid is our dom object
-  console.log('drawing inventory');
 
   //clear out all inventoryslots from inventorygrid
   for (let i = 1; i < inventoryGrid.children.length; i++) {
@@ -102,7 +100,6 @@ function drawInventory(inventory) {
 
   //draws new inventory slots for each item in our inv
   for (let i = 0; i < playerInventory.length; i++) {
-    console.log(`Found item in store inventory: ${playerInventory[i]}`);
 
     let newSlot = document.createElement('div'); //Make a new slot for the item
     newSlot.className = 'inventorySlot';
@@ -123,17 +120,14 @@ function changeSelectedItem(itemSlug) {
   changeCursor(itemSlug);
 }
 
-// This function retrieves localStorage data, returns the objects in a 3 element array [plotGridState, userData, inventory]  LIESL
+// This function retrieves localStorage data, returns the objects in a 3 element array [plotGridState, userData, inventory]
 
 function retrievedUserData() {
   let stringifiedUserData = localStorage.getItem('user');
-  console.log('this is my user data', stringifiedUserData);
   let parsedUserData = JSON.parse(stringifiedUserData);
   let stringifiedInventory = localStorage.getItem('playerInventory');
-  console.log('this is my inventory data', stringifiedInventory);
   let parsedInventory = JSON.parse(stringifiedInventory);
   let stringifiedGrid = localStorage.getItem('plotGridState');
-  console.log('this is my plot grid data', stringifiedGrid);
   let parsedGrid = JSON.parse(stringifiedGrid);
 
   return [parsedUserData, parsedInventory, parsedGrid];
@@ -141,18 +135,15 @@ function retrievedUserData() {
 
 function retrieveLastStoreUpdate() {
   let stringifiedLastStoreUpdate = localStorage.getItem('lastStoreUpdate');
-  // console.log('This is my last store update data', stringifiedLastStoreUpdate);
   return JSON.parse(stringifiedLastStoreUpdate);
 }
 
-//TODO: reconstructor function, loops through retrieved localStorage object(s) and re-instantiates them MICHAEL
 // The function retrievedUserData() is not complete
 
 function reconstructObjFromLocal() {
   let parsedObjects = retrievedUserData();
 
   user = parsedObjects[0];
-  console.log(parsedObjects[0]);
 
   let parsedInventory = parsedObjects[1];
   playerInventory = parsedInventory;
@@ -167,7 +158,6 @@ function reconstructObjFromLocal() {
         retrievedCrop.locationIndex,
         retrievedCrop.age);
       plotGridState[j] = restoredPlant;
-      // console.log(`Added retrievedCrop ${retrievedCrop.cropSlug} to index ${j} in plotGridState`);
     }
   }
 }
@@ -270,7 +260,7 @@ function UserStats() {
 // *********************** EVENT HANDLER ********************************
 
 function handleClick(event) {
-  console.log(event.target);
+
 
   //If we clicked on a plot:
   if (event.target.className.includes('plot') || event.target.className.includes('crop')) {
@@ -354,11 +344,9 @@ function initializeStore() {
   if (lastStoreUpdate !== null) {
     // Checks if global variable currentDateCode does NOT equal the previous session's day
     if (currentDateCode !== lastStoreUpdate) {
-      console.log('New day detected');
       randomizeStoreContents(); //If it's a new day, we need to reroll what's in the store
     } else {
       //load store contents from memory
-      console.log('Same day detected');
     }
   }
   if (playerInventory.length === 0 || lastStoreUpdate === null) {
@@ -371,7 +359,6 @@ function initializeStore() {
 const qtyItemsInStore = 3; //how many items we want the store to have per day
 
 function randomizeStoreContents() {
-  console.log('Randomizing store contents...')
   playerInventory = []; //yes playerInventory represents the store contents lol
 
   for (let i = 0; i < qtyItemsInStore; i++) {
@@ -381,7 +368,6 @@ function randomizeStoreContents() {
       randomItem = allItems[Math.floor(Math.random() * allItems.length)].slug;
     } while (playerInventory.includes(randomItem));
     playerInventory.push(randomItem); //gives the store a random item.
-    console.log(`${allItems[1].slug}`);
   }
 }
 
