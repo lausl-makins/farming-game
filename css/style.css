@@ -1,5 +1,10 @@
+#favicon {
+  border: 1px black solid;
+}
+
+
 body {
-  background-image: linear-gradient(to bottom, antiquewhite,bisque,peru);
+  background-color: antiquewhite;
   width: 100%;
   height: 100%;
 }
@@ -8,11 +13,27 @@ body {
 /* ***************header********* */
 
 .header {
+  margin-top: 1%;
+  display: flex;
+
   text-align: center;
-  font-size: 100px;
+  justify-content: center;
+  align-items: center;
+
+font-size: 100px;
   background-color: #3e8ca1;
   color: antiquewhite;
 
+}
+
+#title {
+  text-align: left;
+  padding: 5%;
+  font-size: 80%;
+  white-space: nowrap;
+  font-family: 'Kalam', cursive;
+  -webkit-text-stroke-width: 3px;
+  -webkit-text-stroke-color: rgb(109, 53, 27);
 }
 
 main {
@@ -26,26 +47,12 @@ main p{
 }
 
 #logo {
-  width: 80px;
-  height:100%;
-  margin-left: 2%;
-  margin-top: 0.5%;
   text-align: left;
   float: left;
   background-color: bisque;
   border-radius: 20px;
 }
 
-#title {
-  text-align: left;
-  /* margin-left: 50px; */
-  padding-left: 200px;
-  margin-top: 1%;
-  padding-top: 1%;
-  font-size: 100px;
-  font-family: 'Kalam', cursive;
-  
-}
 /* ***********END header*********** */
 
 
@@ -171,11 +178,58 @@ h2 {
 }
 
 #statsTable tr:nth-child(odd) {
-  background-color: #88607f;
+  background-color: #e0bd90;
 }
 
 #statsTable td {
   padding: 20px;
   border: 1px solid black;
   border-collapse: collapse;
+}
+
+.citations {
+  font-family: "Arial";
+  font-size: 12px;
+  padding-top: 3%;
+  padding-bottom: 0.5%;
+  text-align: right;
+  list-style-type: none;
+}
+
+.factlist {
+  list-style-type: circle;
+  /* display: inline; */
+  margin-right: 4%;
+  font-size: 20px;
+  margin-top: none;
+}  
+
+.producePhotos {
+  width: 225px;
+  height: 225px;
+  margin-left: 2%;
+  margin-bottom: 5px;
+  border: rgb(255, 255, 255) 3px solid;
+  grid-column-start: 1;
+  grid-column-end: 1;
+  object-fit: cover;
+}
+
+.emphasis {
+  font-style: italic;
+}
+
+.proTitle {
+    font-size: 30px;
+    font-family: 'Kalam', cursive;
+    color: #88607f;
+    text-align: left;
+    padding: 10px;
+}
+
+.produceBox{
+  margin-bottom: 5%;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 1fr;
 }
