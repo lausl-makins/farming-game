@@ -1,5 +1,5 @@
 body {
-  background-image: linear-gradient(to bottom, antiquewhite,bisque,peru);
+  background-color: antiquewhite;
   width: 100%;
   height: 100%;
 }
@@ -8,11 +8,27 @@ body {
 /* ***************header********* */
 
 .header {
+  margin-top: 1%;
+  display: flex;
+
   text-align: center;
-  font-size: 100px;
+  justify-content: center;
+  align-items: center;
+
+font-size: 100px;
   background-color: #3e8ca1;
   color: antiquewhite;
 
+}
+
+#title {
+  text-align: left;
+  padding: 5%;
+  font-size: 80%;
+  white-space: nowrap;
+  font-family: 'Kalam', cursive;
+  -webkit-text-stroke-width: 3px;
+  -webkit-text-stroke-color: rgb(109, 53, 27);
 }
 
 main {
@@ -26,26 +42,12 @@ main p{
 }
 
 #logo {
-  width: 80px;
-  height:100%;
-  margin-left: 2%;
-  margin-top: 0.5%;
   text-align: left;
   float: left;
   background-color: bisque;
   border-radius: 20px;
 }
 
-#title {
-  text-align: left;
-  /* margin-left: 50px; */
-  padding-left: 200px;
-  margin-top: 1%;
-  padding-top: 1%;
-  font-size: 100px;
-  font-family: 'Kalam', cursive;
-  
-}
 /* ***********END header*********** */
 
 
