@@ -1,3 +1,8 @@
+#favicon {
+  border: 1px black solid;
+}
+
+
 body {
   background-image: linear-gradient(to bottom, antiquewhite,bisque,peru);
   width: 100%;
@@ -183,13 +188,19 @@ h2 {
 .citations {
   font-family: "Arial";
   font-size: 12px;
+  padding-top: 3%;
+  padding-bottom: 0.5%;
+  text-align: right;
+  list-style-type: none;
 }
 
-/* p .factlist {
-  /* list-style-type: circle;
-  */
-  /* border: 1px solid black;
-} */ */
+.factlist {
+  list-style-type: circle;
+  /* display: inline; */
+  margin-right: 4%;
+  font-size: 20px;
+  margin-top: none;
+}  
 
 .producePhotos {
   width: 225px;
@@ -200,4 +211,23 @@ h2 {
   grid-column-start: 1;
   grid-column-end: 1;
   object-fit: cover;
+}
+
+.emphasis {
+  font-style: italic;
+}
+
+.proTitle {
+    font-size: 30px;
+    font-family: 'Kalam', cursive;
+    color: #88607f;
+    text-align: left;
+    padding: 10px;
+}
+
+.produceBox{
+  margin-bottom: 5%;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 1fr;
 }
