@@ -1,7 +1,7 @@
 'use strict';
 
 // This is how many plot objects will be instantiated to populate the plotGrid
-const plotQty = 25; // index 0-24
+const plotQty = 25; 
 
 // DOM REFERENCES
 
@@ -58,7 +58,6 @@ function renderPlayerMoney() {
   moneyDisplay.innerHTML = '<img src=img/nugget.png>' + user.playerMoney + ' nuggets';
 }
 
-
 //This function puts all of our save state and user data into local storage.
 function pushLocalStorage() {
   let stringifiedUserData = JSON.stringify(user);
@@ -68,13 +67,9 @@ function pushLocalStorage() {
   let stringifiedGrid = JSON.stringify(plotGridState);
   localStorage.setItem('plotGridState', stringifiedGrid);
 
-  //TODO:  Only the pushing to local works right now for lastStoreUpdate, we still need to implement loading it
   let stringifiedDateCode = JSON.stringify(currentDateCode);
   localStorage.setItem('lastStoreUpdate', stringifiedDateCode);
 }
-
-//--> DONE: function to replace cursor icon with the seed icon when a seed is selected from store/inventory LAUREN
-//--> DONE: function clear cursor graphic and reset to default LAUREN
 
 function changeCursor(newCursorFilename) {
   //newCursor should be either the name of the item that the cursor changes to or it should be null, which makes the cursor the default one again. 
@@ -88,7 +83,7 @@ function changeCursor(newCursorFilename) {
 }
 
 
-// **************************************************************  I N V E N T O R Y     F U N C T I O N S **************************************************************
+// ****************  I N V E N T O R Y  F U N C T I O N S ************************* //
 //displays/refreshes the store's inventory as buttons.
 function drawInventory(inventory) {
   //inventoryGrid is our dom object
@@ -137,8 +132,6 @@ function retrieveLastStoreUpdate() {
   let stringifiedLastStoreUpdate = localStorage.getItem('lastStoreUpdate');
   return JSON.parse(stringifiedLastStoreUpdate);
 }
-
-// The function retrievedUserData() is not complete
 
 function reconstructObjFromLocal() {
   let parsedObjects = retrievedUserData();
@@ -198,7 +191,7 @@ LivePlant.prototype.renderPlant = function (ageStage = 'growth1') {
   let cropElem = document.createElement('img');
   // Get and assign the plant's parent element to a temporary variable
   let locationElem = document.getElementById(`${this.locationIndex}-plot`);
-  cropElem.src = `img/${this.cropSlug}_${ageStage}.png`; //TODO test to make sure this was fixed for web deployment so images aren't broken
+  cropElem.src = `img/${this.cropSlug}_${ageStage}.png`; 
   // This ID must start with a number matching its index in the plotGridState
   // This way our onClick event handler behaves in a predictable way even if a crop is on top of a plot
   cropElem.id = `${this.locationIndex}-${this.cropSlug}`;
@@ -359,7 +352,7 @@ function initializeStore() {
 const qtyItemsInStore = 3; //how many items we want the store to have per day
 
 function randomizeStoreContents() {
-  playerInventory = []; //yes playerInventory represents the store contents lol
+  playerInventory = []; //playerInventory represents the store contents
 
   for (let i = 0; i < qtyItemsInStore; i++) {
     let randomItem;
@@ -391,14 +384,9 @@ let tomatoSeeds = new Item('tomato', 'Tomato Seeds', 'tomatoseeds', 40);
 
 initPlotGrid();
 
-// let stringifiedUser = localStorage.getItem('user');
-
-// let parsedInt = JSON.parse(stringifiedUser);
-
 if (localStorage.getItem('user')) {
   reconstructObjFromLocal();
 }
-
 
 if (user === undefined) {
   user = new UserStats();
@@ -407,7 +395,6 @@ if (user === undefined) {
 initializeStore();
 renderPlayerMoney();
 globalTick();
-
 
 // *********************** event listeners ***********************
 gameArea.addEventListener('click', handleClick);
