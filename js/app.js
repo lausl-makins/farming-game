@@ -56,7 +56,7 @@ function spendPlayerMoney(number) {
 
 // Show player money
 function renderPlayerMoney() {
-  moneyDisplay.innerText = user.playerMoney + ' nuggets';
+  moneyDisplay.innerHTML = '<img src=img/nugget.png>' + user.playerMoney + ' nuggets';
 }
 
 

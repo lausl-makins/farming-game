@@ -29,6 +29,7 @@
 }
 
 #inventoryGrid{
+  margin-top: 10%;
   border: 2px dashed #3e8ca1;
   display: grid;
   grid-template-columns: 1fr;
@@ -41,8 +42,9 @@
 #storeTitle{
   margin-top:10%;
   font-family: 'Kalam', cursive;
-  font-size: 200%;
+  font-size: 120%;
   color: brown;
+  overflow: nowrap;
 }
 
 .inventorySlot{
@@ -76,17 +78,23 @@ border-radius: 25px;
 #moneyDisplay {
   background-color: #3e8ca1;
   color: antiquewhite;
+  font-family: 'Supermercado One', cursive;
+
   border-radius: 10px;
   padding: 2% 10%;
   width: 70%;
+  height: fit-content;
+
   margin: 0px auto;
-  height: 30px;
   text-align: center;
   font-family: sans-serif;
   font-size: larger;
+
   display: flex;
   justify-content: center;
   align-items: center;
+
+
 }
 
 .inventorySlot {
@@ -95,9 +103,6 @@ border-radius: 25px;
   /* background-color: sandybrown; */
 }
 
-#moneydisplay {
-  font-family: 'Supermercado One', cursive;
-}
 
 img{
   image-rendering: pixelated;
