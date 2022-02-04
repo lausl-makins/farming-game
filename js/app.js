@@ -357,7 +357,9 @@ function initializeStore() {
       console.log('Same day detected');
     }
   }
-  if (playerInventory.length===0){
+  // If the inventory is empty, randomize its contents
+  // the OR conditional permits refreshing the store by deleting the localStorage date data
+  if (playerInventory.length===0 || lastStoreUpdate===null){
     randomizeStoreContents();
   }
   drawInventory(playerInventory);
@@ -376,7 +378,7 @@ function randomizeStoreContents() {
     do {
       randomItem = allItems[Math.floor(Math.random() * allItems.length)].slug;
     } while (playerInventory.includes(randomItem));
-    playerInventory.push(); //gives the store a random item.
+    playerInventory.push(randomItem); //gives the store a random item.
     console.log(`${allItems[1].slug}`);
   }
 }
