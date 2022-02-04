@@ -70,9 +70,9 @@ function pushLocalStorage() {
   let stringifiedGrid = JSON.stringify(plotGridState);
   localStorage.setItem('plotGridState', stringifiedGrid);
 
-  //TODO:  Only the pushing to local works right now for lastStoreUpdate, we still need to implement loading it
-  let stringifiedLastStoreUpdate = JSON.stringify(lastStoreUpdate);
-  localStorage.setItem('lastStoreUpdate', stringifiedLastStoreUpdate);
+  //Stores the currentDateCode as the lastStoreUpdate in localStorage
+  let stringifiedDateCode = JSON.stringify(currentDateCode);
+  localStorage.setItem('lastStoreUpdate', stringifiedDateCode);
 }
 
 //--> DONE: function to replace cursor icon with the seed icon when a seed is selected from store/inventory LAUREN
@@ -146,14 +146,12 @@ function retrieveLastStoreUpdate() {
   lastStoreUpdate = JSON.parse(stringifiedLastStoreUpdate);
 }
 
-//TODO: reconstructor function, loops through retrieved localStorage object(s) and re-instantiates them MICHAEL
 // The function retrievedUserData() is not complete
 
 function reconstructObjFromLocal() {
   let parsedObjects = retrievedUserData();
 
   user = parsedObjects[0];
-  console.log(parsedObjects[0]);
 
   let parsedInventory = parsedObjects[1];
   playerInventory = parsedInventory;
@@ -168,7 +166,6 @@ function reconstructObjFromLocal() {
         retrievedCrop.locationIndex,
         retrievedCrop.age);
       plotGridState[j] = restoredPlant;
-      // console.log(`Added retrievedCrop ${retrievedCrop.cropSlug} to index ${j} in plotGridState`);
     }
   }
 }
@@ -202,7 +199,7 @@ LivePlant.prototype.renderPlant = function (ageStage = 'growth1') {
   let cropElem = document.createElement('img');
   // Get and assign the plant's parent element to a temporary variable
   let locationElem = document.getElementById(`${this.locationIndex}-plot`);
-  cropElem.src = `img/${this.cropSlug}_${ageStage}.png`; //TODO test to make sure this was fixed for web deployment so images aren't broken
+  cropElem.src = `img/${this.cropSlug}_${ageStage}.png`;
   // This ID must start with a number matching its index in the plotGridState
   // This way our onClick event handler behaves in a predictable way even if a crop is on top of a plot
   cropElem.id = `${this.locationIndex}-${this.cropSlug}`;
@@ -364,7 +361,9 @@ function initializeStore() {
       console.log('Same day detected');
     }
   }
-  if (playerInventory.length===0){
+  // If the inventory is empty, randomize its contents
+  // the OR conditional permits refreshing the store by deleting the localStorage date data
+  if (playerInventory.length===0 || lastStoreUpdate===null){
     randomizeStoreContents();
   }
   drawInventory(playerInventory);
@@ -410,20 +409,23 @@ function initializeStore() {
 const qtyItemsInStore = 3; //how many items we want the store to have per day
 
 function randomizeStoreContents() {
-  console.log('Randomizing store contents...')
+  console.log('Randomizing store contents...');
   playerInventory = []; //yes playerInventory represents the store contents lol
 
   for (let i = 0; i < qtyItemsInStore; i++) {
-    playerInventory.push(allItems[Math.floor(Math.random() * allItems.length)].slug); //gives the store a random item.
+    let randomItem;
+    // This do...while loop generates a randomItem, but will try again if it's already in the inventory
+    do {
+      randomItem = allItems[Math.floor(Math.random() * allItems.length)].slug;
+    } while (playerInventory.includes(randomItem));
+    playerInventory.push(randomItem); //gives the store a random item.
     console.log(`${allItems[1].slug}`);
-    // TODO:  prevent duplicates
   }
 }
 
 
 // *********************** FUNCTION CALLS/ OBJECT INSTANTIATION ********************************
 
-//  sprite arrays not necessary
 //Feeding our Crop constructor new crops: function Crop(yieldQty, sellValue, growthTime, sprites, slug)
 let potato = new Crop(1, 40, 30, [], 'potato');
 let carrot = new Crop(1, 15, 15, [], 'carrot');
