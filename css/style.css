@@ -10,7 +10,7 @@ body {
 }
 
 
-/* ***************header********* */
+/* **********header********* */
 
 .header {
   margin-top: 1%;
@@ -59,7 +59,6 @@ main p{
 /* *************** NAV BAR ********************** */
 
 nav{
-  /* border: solid black 2px; */
   text-align: center;
   background-color: #779482;
 }
@@ -198,7 +197,6 @@ h2 {
 
 .factlist {
   list-style-type: circle;
-  /* display: inline; */
   margin-right: 4%;
   font-size: 20px;
   margin-top: none;
