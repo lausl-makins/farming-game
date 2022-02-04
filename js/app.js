@@ -281,6 +281,9 @@ function handleClick(event) {
       let clickedPlantSlug = plotGridState[plotIndex].cropSlug;
       let slugIndex = allCropSlugs.indexOf(clickedPlantSlug);
       let referenceCrop = cropTypes.find(element => element.slug === clickedPlantSlug);
+      if(!(user.cropsHarvested[slugIndex])){
+        user.cropsHarvested[slugIndex] = 0;
+      }
       user.cropsHarvested[slugIndex]++;
       plotGridState[plotIndex].killPlant();
       plotGridState[plotIndex] = null;
