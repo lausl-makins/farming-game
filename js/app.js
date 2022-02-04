@@ -374,7 +374,7 @@ function randomizeStoreContents() {
 
   for (let i = 0; i < qtyItemsInStore; i++) {
     let randomItem;
-    // Generates a randomItem, but this do...while loop will try again if it's already in the inventory
+    // This do...while loop generates a randomItem, but will try again if it's already in the inventory
     do {
       randomItem = allItems[Math.floor(Math.random() * allItems.length)].slug;
     } while (playerInventory.includes(randomItem));
