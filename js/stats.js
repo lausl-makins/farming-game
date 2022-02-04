@@ -10,7 +10,6 @@ let user;
 function loadUser() {
   let stringifiedUser = localStorage.getItem('user');
   user = JSON.parse(stringifiedUser);
-  console.log(user);
 }
 
 function renderChart() {
@@ -51,10 +50,7 @@ renderStatsTable();
 
 function renderStatsTable() {
   statsTableHolder.removeChild(statsTableHolder.childNodes[0]); //removes existing table so we dont draw duplicates
-  // Create table:
-  // if (tableElem){
   tableElem = document.createElement('table');
-  // }
   statsTableHolder.appendChild(tableElem);
 
   let timeString = computeTimeString();
@@ -106,51 +102,3 @@ function computeTimeString() {
   // Returns the time string in a template literal
   return `${hours}:${minString}:${secString}`;
 }
-
-// function addHeadersToTable(table) {
-//   //Adds a row consisting of our timeslot labels at the top of the table.
-//   const tableHeadersElem = document.createElement('thead');
-//   table.appendChild(tableHeadersElem);
-
-//   //Adds a single blank heading, so there's room to put the city name
-//   const blankHeader = document.createElement('th');
-//   blankHeader.textContent = '';
-//   tableHeadersElem.appendChild(blankHeader);
-
-//   //Loops through list of times to populate headings
-//   for (let i = 0; i < times.length; i++) {
-//     const tableHeader = document.createElement('th');
-//     tableHeader.textContent = times[i];
-//     tableHeadersElem.appendChild(tableHeader);
-//   }
-
-//   //Adds final Daily Location Total header
-//   const dailyLocationTotalHeader = document.createElement('th');
-//   dailyLocationTotalHeader.textContent = 'Daily Location Total';
-//   tableHeadersElem.appendChild(dailyLocationTotalHeader);
-// }
-
-
-// function addFootersToTable(table) {
-//   //Adds a row consisting of our sales totals to the bottom of the table.
-//   const tableFootersElem = document.createElement('thead');
-//   table.appendChild(tableFootersElem);
-
-//   //Adds a the "Totals" label
-//   const totalsLabel = document.createElement('th');
-//   totalsLabel.textContent = 'Totals';
-//   tableFootersElem.appendChild(totalsLabel);
-
-//   let dailyTotalsSum = 0;
-
-//   //Loops through list of times to populate totals
-//   for (let i = 0; i < times.length; i++) {
-//     let hourlyTotal = 0;
-//     for (let j = 0; j < cities.length; j++) {
-//       hourlyTotal += cities[j].simulatedCookiesSoldPerHour[i];
-//       dailyTotalsSum += cities[j].simulatedCookiesSoldPerHour[i];
-//     }
-//     const tableFooter = document.createElement('th');
-//     tableFooter.textContent = hourlyTotal;
-//     tableFootersElem.appendChild(tableFooter);
-//   }}
