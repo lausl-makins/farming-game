@@ -32,8 +32,6 @@ Describe the individual features that your product will do. High overview of eac
 
 >OUT - What will your product not do.
 
-<!-- These should be features that you will make very clear from the beginning that you will not do during development. These should be limited and very few. Pick your battles wisely. -->
-
 1. Our site will never be adapted to an iOS, Android, or desktop app.
 2. Our site will not feature real-money purchases. 
 
@@ -79,18 +77,3 @@ List the functionality of your product. This will consist of tasks such as the f
 - Loop through array to populate grid with plants
 - Loop through inventory to populate player's inventory with item 'buttons'
 - Each time user modifies state of farm, write gameState to local storage
-
-<!-- Non-Functional Requirements (301 & 401 only)
-Non-functional requirements are requirements that are not directly related to the functionality of the application but still important to the app.
-
-Examples include:
-
-Security
-Usability
-Testability
-etc….
-Pick 2 non-functional requirements and describe their functionality in your application.
-
-If you are stuck on what non-functional requirements are, do a quick online search and do some research. Write a minimum of 3-5 sentences to describe how the non-functional requirements fits into your app.
-
-You MUST describe what the non-functional requirement is and how it will be implemented. Simply saying “Our project will be testable for testibility” is NOT acceptable. Tell us how, why, and what. -->
