@@ -1,6 +1,6 @@
 # farming-game
 
-An Educational Farming Game with a 2D grid farm plot that keeps track of your inventory (seeds, plants, tools). Integrates real time clock and you can grow your plants, harvest them, sell them, etc.
+Dirt.Farm is an Educational Farming Game with a 2D grid farm plot that keeps track of your inventory (seeds, plants, tools). Integrates real time clock and you can grow your plants, harvest them, sell them, etc.
 
 ## Created by:
 
