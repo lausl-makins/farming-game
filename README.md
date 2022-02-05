@@ -2,6 +2,8 @@
 
 Dirt.Farm is an Educational Farming Game with a 2D grid farm plot that keeps track of your inventory (seeds, plants, tools). Integrates real time clock and you can grow your plants, harvest them, sell them, etc.
 
+## [Play Now!](https://lausl-makins.github.io/farming-game/)
+
 ## Created by:
 
 - [Jeffrey Jenkins](https://github.com/jeffreyjtech)
